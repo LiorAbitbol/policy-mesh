@@ -1,4 +1,9 @@
-"""End-to-end /v1/chat orchestration tests with mocked decide, providers, and audit. No real network."""
+"""End-to-end /v1/chat orchestration tests with mocked decide, providers, and audit.
+
+All tests use mocked providers (decide, ollama_provider, openai_provider, persist_audit_event);
+no real network calls. Coverage: route behavior (local + openai success), fallback behavior
+(provider failure → error + audit failure_category), audit write assertions, schema validation.
+"""
 
 from unittest.mock import patch
 
@@ -8,8 +13,8 @@ from app.audit.context import AuditRequestContext
 from app.main import app
 
 
-def test_chat_happy_path_returns_provider_reason_codes_content() -> None:
-    """Happy path: mocked decide (local) and ollama.chat (success) → 200, provider, reason_codes, content."""
+def test_chat_local_happy_path_returns_provider_reason_codes_content() -> None:
+    """Route behavior (local): mocked decide → local, ollama.chat success → 200, provider, reason_codes, content; audit written with status=success."""
     with (
         patch("app.services.chat_orchestrator.decide") as mock_decide,
         patch("app.services.chat_orchestrator.ollama_provider") as mock_ollama,
@@ -42,8 +47,42 @@ def test_chat_happy_path_returns_provider_reason_codes_content() -> None:
     assert ctx.failure_category is None
 
 
-def test_chat_failure_path_returns_provider_reason_codes_error_and_audit_with_failure_category() -> None:
-    """Failure path: mocked decide (openai) and openai.chat (failure) → 200, provider, reason_codes, error; audit has failure_category."""
+def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
+    """Route behavior (openai): mocked decide → openai, openai.chat success → 200, provider, reason_codes, content; audit written with status=success."""
+    with (
+        patch("app.services.chat_orchestrator.decide") as mock_decide,
+        patch("app.services.chat_orchestrator.openai_provider") as mock_openai,
+        patch("app.services.chat_orchestrator.persist_audit_event") as mock_persist,
+    ):
+        mock_decide.return_value = {"provider": "openai", "reason_codes": ["default_openai"]}
+        mock_openai.chat.return_value = {"success": True, "content": "Hello from OpenAI"}
+
+        client = TestClient(app)
+        response = client.post(
+            "/v1/chat",
+            json={"messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["provider"] == "openai"
+    assert data["reason_codes"] == ["default_openai"]
+    assert data["content"] == "Hello from OpenAI"
+    assert data.get("error") is None
+    mock_decide.assert_called_once()
+    mock_openai.chat.assert_called_once()
+    mock_persist.assert_called_once()
+    ctx: AuditRequestContext = mock_persist.call_args[0][0]
+    assert ctx.request_id
+    assert "provider=openai" in ctx.decision
+    assert "default_openai" in ctx.decision
+    assert ctx.status == "success"
+    assert ctx.latency_ms >= 0
+    assert ctx.failure_category is None
+
+
+def test_chat_provider_failure_returns_error_and_audit_with_failure_category() -> None:
+    """Fallback behavior: provider failure → 200 with error; audit write with status=failure and failure_category."""
     with (
         patch("app.services.chat_orchestrator.decide") as mock_decide,
         patch("app.services.chat_orchestrator.openai_provider") as mock_openai,

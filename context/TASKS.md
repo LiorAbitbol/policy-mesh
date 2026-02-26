@@ -15,9 +15,9 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106` (Add metrics middleware + `/v1/metrics`)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107` (Add integration tests with mocked providers)
 - In Progress: none
-- Next: `T-107` (Add integration tests with mocked providers)
+- Next: none (M1 complete)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -33,7 +33,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 | 9 | T-103 | Implement Ollama and OpenAI provider clients | `done` | `planner` | `context/private/tasks/T-103.md` |
 | 10 | T-105 | Add `/v1/chat` orchestration service | `done` | `planner` | `context/private/tasks/T-105.md` |
 | 11 | T-106 | Add metrics middleware + `/v1/metrics` | `done` | `planner` | `context/private/tasks/T-106.md` |
-| 12 | T-107 | Add integration tests with mocked providers | `todo` | `planner` | `context/private/tasks/T-107.md` |
+| 12 | T-107 | Add integration tests with mocked providers | `done` | `planner` | `context/private/tasks/T-107.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -92,7 +92,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-106.md`
   - Acceptance: Counters and latency histograms exposed.
 - T-107: Add integration tests with mocked providers
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-107.md`
   - Acceptance: Tests verify route, fallback behavior, and audit write.
