@@ -15,9 +15,9 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring), `T-111` (Add CI container smoke validation for app service), `T-109` (Add local Postgres setup and migration bootstrap), `T-104` (Persist `AuditEvent` per request), `T-112` (Enable pytest in CI (python-tests job))
+- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring), `T-111` (Add CI container smoke validation for app service), `T-109` (Add local Postgres setup and migration bootstrap), `T-104` (Persist `AuditEvent` per request), `T-112` (Enable pytest in CI (python-tests job)), `T-102` (Implement DecisionEngine with reason codes)
 - In Progress: none
-- Next: `T-102` (Implement DecisionEngine with reason codes)
+- Next: `T-103` (Implement Ollama and OpenAI provider clients)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -29,7 +29,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 | 5 | T-109 | Add local Postgres setup and migration bootstrap | `done` | `planner` | `context/private/tasks/T-109.md` |
 | 6 | T-104 | Persist `AuditEvent` per request | `done` | `planner` | `context/private/tasks/T-104.md` |
 | 7 | T-112 | Enable pytest in CI (python-tests job) | `done` | `planner` | `context/private/tasks/T-112.md` |
-| 8 | T-102 | Implement DecisionEngine with reason codes | `todo` | `planner` | `context/private/tasks/T-102.md` |
+| 8 | T-102 | Implement DecisionEngine with reason codes | `done` | `planner` | `context/private/tasks/T-102.md` |
 | 9 | T-103 | Implement Ollama and OpenAI provider clients | `todo` | `planner` | `context/private/tasks/T-103.md` |
 | 10 | T-105 | Add `/v1/chat` orchestration service | `todo` | `planner` | `context/private/tasks/T-105.md` |
 | 11 | T-106 | Add metrics middleware + `/v1/metrics` | `todo` | `planner` | `context/private/tasks/T-106.md` |
@@ -72,7 +72,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-112.md`
   - Acceptance: CI runs `pytest tests/ -v` when Python sources present; all tests pass.
 - T-102: Implement DecisionEngine with reason codes
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-102.md`
   - Acceptance: Unit tests cover sensitive/cost/default branches.

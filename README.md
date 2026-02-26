@@ -42,6 +42,11 @@ This repository currently contains governance/docs scaffolding and task definiti
 - Run migrations: `alembic upgrade head`
 - Verify revision: `alembic current`
 
+## Routing / Decision engine (T-102)
+- Order: **sensitivity** (keyword in prompt → local) → **cost** (prompt length under threshold → local) → **default** (openai).
+- Config via env: `SENSITIVITY_KEYWORDS` (comma-separated), `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` (int), `DEFAULT_PROVIDER` (`openai` or `local`). Defaults: empty keywords, 1000, openai.
+- Unit tests: `pytest tests/unit/test_decision_engine.py tests/unit/test_reason_codes.py -v`
+
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.
