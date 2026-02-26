@@ -15,16 +15,16 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`)
+- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring)
 - In Progress: none
-- Next: `T-110` (Add app container layer and healthcheck wiring)
+- Next: `T-109` (Add local Postgres setup and migration bootstrap)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
 |---|---|---|---|---|---|
 | 1 | T-108 | Add GitHub Actions CI baseline | `done` | `planner` | `context/private/tasks/T-108.md` |
 | 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `done` | `planner` | `context/private/tasks/T-101.md` |
-| 3 | T-110 | Add app container layer and healthcheck wiring | `todo` | `planner` | `context/private/tasks/T-110.md` |
+| 3 | T-110 | Add app container layer and healthcheck wiring | `done` | `planner` | `context/private/tasks/T-110.md` |
 | 4 | T-109 | Add local Postgres setup and migration bootstrap | `todo` | `planner` | `context/private/tasks/T-109.md` |
 | 5 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
 | 6 | T-102 | Implement DecisionEngine with reason codes | `todo` | `planner` | `context/private/tasks/T-102.md` |
@@ -45,7 +45,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-108.md`
   - Acceptance: PR/push workflow runs repo checks now and is ready to expand for Python tests.
 - T-110: Add app container layer and healthcheck wiring
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-110.md`
   - Acceptance: Docker image runs app and containerized health check verifies `/v1/health`.

@@ -26,6 +26,12 @@ This repository currently contains governance/docs scaffolding and task definiti
 - Health check: `curl http://127.0.0.1:8000/v1/health` -> `{"status":"ok"}`
 - Run health test: `pytest tests/integration/test_health.py -v`
 
+## Container Run (T-110)
+- Build image: `docker build -t policy-mesh-app .`
+- Run with compose: `docker compose up -d app`
+- Health check: `curl http://127.0.0.1:8000/v1/health` -> `{"status":"ok"}`
+- Compose health status: `docker compose ps` (app service shows `healthy` when ready)
+
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.

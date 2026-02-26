@@ -78,6 +78,8 @@ policy-mesh/
 │       │   └── T-XXXX.md            # Planner/Coder/Tester handoff record
 │       └── archive/                 # Completed task history
 │           └── README.md            # Archival conventions
+├── Dockerfile                       # App container image definition
+├── .dockerignore                    # Build context exclusions
 ├── docker-compose.yml               # Local demo orchestration
 ├── .env.example                     # Documented environment variables template
 ├── pyproject.toml                   # Python project/tooling configuration
