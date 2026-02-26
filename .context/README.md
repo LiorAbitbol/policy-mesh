@@ -2,7 +2,7 @@
 
 ## Purpose
 This folder is the execution alignment contract for humans and AI tools.
-It defines scope, rules, and active tasks for the Hybrid AI Control Plane project.
+It defines scope, rules, and active tasks for the Policy Mesh project.
 
 `RULES.md` and `AGENTS.md` in this folder are canonical tracked governance docs.
 `.context/private/` may include supplemental local/operator notes and task execution records.

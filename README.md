@@ -16,7 +16,7 @@ Policy Mesh routes chat requests deterministically between local and cloud provi
 - Audit event persistence targets Postgres.
 
 ## Current Status
-This repository currently contains governance/docs scaffolding and task definitions. Application code is implemented incrementally through task-based workflow.
+M1 (runnable vertical slice) is complete: `/v1/chat` → decision → provider → audit → metrics, with integration tests. Governance and task workflow live in `.context/`; application code is extended via task-based workflow.
 
 ## Local Run/Test (T-101)
 - Create venv: `python3 -m venv .venv`
@@ -73,6 +73,7 @@ This repository currently contains governance/docs scaffolding and task definiti
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.
 - `docs/DECISIONS.md` - Decision log and dependency decision template.
+- `.context/` - Execution context: `PROJECT.md`, `SCOPE.md`, `TASKS.md`, `RULES.md`, `AGENTS.md` (see `.context/README.md`).
 
 ## Context and Workflow
 - `.context/` contains public execution context (`PROJECT`, `SCOPE`, `TASKS`) and pointers.
