@@ -159,6 +159,26 @@ Adopt `fastapi` and `uvicorn` as the minimal runtime stack for V1 API bootstrap,
 
 ---
 
+## DEC-008: Migration Stack Dependencies (Alembic, SQLAlchemy, psycopg)
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Add `alembic`, `sqlalchemy`, and `psycopg[binary]` as dev dependencies for running migrations against local Postgres (T-109).
+
+### Why
+- Alembic requires SQLAlchemy for metadata and migration generation.
+- `psycopg` is the Postgres adapter for `postgresql://` URLs in Alembic.
+
+### Alternatives Considered
+- `psycopg2-binary` (legacy driver; psycopg3 is maintained and async-capable).
+- Async-only driver for migrations (rejected: Alembic migrations are sync by default).
+
+### Risks
+- Driver version compatibility with Postgres 16; psycopg supports current Postgres versions.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 

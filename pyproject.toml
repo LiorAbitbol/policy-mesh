@@ -16,6 +16,9 @@ dependencies = [
 dev = [
   "pytest",
   "httpx",
+  "alembic",
+  "sqlalchemy",
+  "psycopg[binary]",
 ]
 
 [tool.setuptools.packages.find]
