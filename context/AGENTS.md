@@ -102,6 +102,7 @@ One task = one commit-sized change.
 3. Claude validates task.
 4. If defects are found, Cursor fixes within task scope.
 5. Task is complete when validation checklist passes.
+6. Once Coder and Tester are validated, record completion in the task doc and `context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
 
 No role may expand scope without creating a new task.
 

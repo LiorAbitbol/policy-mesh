@@ -108,4 +108,5 @@ When unsure: stop, do not guess.
 - Every task in `context/TASKS.md` must include: why, in-scope items, out-of-scope items, files expected to change, test requirements, and definition of done.
 - Every task must include a status field.
 - When work is complete, mark the task status as `done`.
+- Once the Coder and Tester outputs have been validated (acceptance criteria met, task doc updated), record completion in the task doc and `context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
 - Completed tasks must be archived under `context/private/`.

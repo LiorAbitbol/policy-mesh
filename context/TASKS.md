@@ -15,9 +15,9 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring), `T-111` (Add CI container smoke validation for app service), `T-109` (Add local Postgres setup and migration bootstrap)
+- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring), `T-111` (Add CI container smoke validation for app service), `T-109` (Add local Postgres setup and migration bootstrap), `T-104` (Persist `AuditEvent` per request)
 - In Progress: none
-- Next: `T-104` (Persist `AuditEvent` per request)
+- Next: `T-102` (Implement DecisionEngine with reason codes)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -27,7 +27,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 | 3 | T-110 | Add app container layer and healthcheck wiring | `done` | `planner` | `context/private/tasks/T-110.md` |
 | 4 | T-111 | Add CI container smoke validation for app service | `done` | `planner` | `context/private/tasks/T-111.md` |
 | 5 | T-109 | Add local Postgres setup and migration bootstrap | `done` | `planner` | `context/private/tasks/T-109.md` |
-| 6 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
+| 6 | T-104 | Persist `AuditEvent` per request | `done` | `planner` | `context/private/tasks/T-104.md` |
 | 7 | T-102 | Implement DecisionEngine with reason codes | `todo` | `planner` | `context/private/tasks/T-102.md` |
 | 8 | T-103 | Implement Ollama and OpenAI provider clients | `todo` | `planner` | `context/private/tasks/T-103.md` |
 | 9 | T-105 | Add `/v1/chat` orchestration service | `todo` | `planner` | `context/private/tasks/T-105.md` |
@@ -61,7 +61,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-109.md`
   - Acceptance: Local Postgres is runnable via docker-compose with env config and migration bootstrap path documented.
 - T-104: Persist `AuditEvent` per request
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-104.md`
   - Acceptance: DB row includes request id, decision, status, latency.
