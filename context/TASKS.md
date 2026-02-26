@@ -15,9 +15,9 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`), `T-110` (Add app container layer and healthcheck wiring), `T-111` (Add CI container smoke validation for app service), `T-109` (Add local Postgres setup and migration bootstrap), `T-104` (Persist `AuditEvent` per request), `T-112` (Enable pytest in CI (python-tests job)), `T-102` (Implement DecisionEngine with reason codes), `T-103` (Implement Ollama and OpenAI provider clients), `T-105` (Add `/v1/chat` orchestration service)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106` (Add metrics middleware + `/v1/metrics`)
 - In Progress: none
-- Next: `T-106` (Add metrics middleware + `/v1/metrics`)
+- Next: `T-107` (Add integration tests with mocked providers)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -32,7 +32,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 | 8 | T-102 | Implement DecisionEngine with reason codes | `done` | `planner` | `context/private/tasks/T-102.md` |
 | 9 | T-103 | Implement Ollama and OpenAI provider clients | `done` | `planner` | `context/private/tasks/T-103.md` |
 | 10 | T-105 | Add `/v1/chat` orchestration service | `done` | `planner` | `context/private/tasks/T-105.md` |
-| 11 | T-106 | Add metrics middleware + `/v1/metrics` | `todo` | `planner` | `context/private/tasks/T-106.md` |
+| 11 | T-106 | Add metrics middleware + `/v1/metrics` | `done` | `planner` | `context/private/tasks/T-106.md` |
 | 12 | T-107 | Add integration tests with mocked providers | `todo` | `planner` | `context/private/tasks/T-107.md` |
 
 ## Task Index
@@ -87,7 +87,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-105.md`
   - Acceptance: Endpoint returns provider, reasons, response payload.
 - T-106: Add metrics middleware + `/v1/metrics`
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-106.md`
   - Acceptance: Counters and latency histograms exposed.

@@ -1,5 +1,5 @@
 """
-/v1/chat orchestration: request_id → decide → provider chat → latency → audit → metrics stub → response.
+/v1/chat orchestration: request_id → decide → provider → latency → audit → metrics → response.
 """
 
 import hashlib
@@ -9,10 +9,10 @@ import uuid
 from app.api.schemas.chat import ChatRequest, ChatResponse
 from app.audit.context import AuditRequestContext
 from app.audit.service import persist_audit_event
+from app.core.telemetry import record_chat_request
 from app.decision.engine import decide
 from app.providers import ollama as ollama_provider
 from app.providers import openai as openai_provider
-from app.services.metrics_stub import record_chat_request
 
 
 def _prompt_from_request(body: ChatRequest) -> tuple[str, int]:
@@ -38,7 +38,7 @@ def _messages_for_provider(body: ChatRequest) -> list[dict[str, str]]:
 
 def handle_chat_request(body: ChatRequest) -> ChatResponse:
     """
-    Run full orchestration: decide → provider → audit → metrics stub → response.
+    Run full orchestration: decide → provider → audit → metrics → response.
     Returns ChatResponse with provider, reason_codes, and content (success) or error (failure).
     """
     request_id = str(uuid.uuid4())

@@ -220,6 +220,27 @@ Promote `sqlalchemy` and `psycopg[binary]` from dev extras to main (runtime) dep
 
 ---
 
+## DEC-011: Prometheus client for metrics (prometheus_client)
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Use the `prometheus_client` Python package for Prometheus-compatible counters and histograms, and expose `/v1/metrics` returning the default registry in Prometheus text exposition format.
+
+### Why
+- Standard, widely used client; output is scrape-ready for Prometheus.
+- Supports Counter and Histogram; low overhead and deterministic.
+- No custom format to maintain.
+
+### Alternatives Considered
+- Custom plain-text format: no dependency but reinvents the wheel and may diverge from Prometheus expectations.
+- OpenTelemetry: heavier and out of scope for V1 “Prometheus-compatible” requirement.
+
+### Risks
+- New runtime dependency; add to main deps in pyproject.toml. High-cardinality labels must be avoided (use only provider, status, not request_id or reason_codes).
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 

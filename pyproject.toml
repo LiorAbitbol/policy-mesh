@@ -13,6 +13,7 @@ dependencies = [
   "httpx",
   "sqlalchemy",
   "psycopg[binary]",
+  "prometheus_client",
 ]
 
 [project.optional-dependencies]

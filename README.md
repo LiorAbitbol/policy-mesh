@@ -64,7 +64,10 @@ This repository currently contains governance/docs scaffolding and task definiti
     -H "Content-Type: application/json" \
     -d '{"messages":[{"role":"user","content":"Hello"}]}'
   ```
-- Flow: decision → provider call → audit write → metrics hook → response. Integration tests: `pytest tests/integration/test_chat_flow.py -v`
+- Flow: decision → provider call → audit write → metrics → response. Integration tests: `pytest tests/integration/test_chat_flow.py -v`
+
+## GET /v1/metrics (T-106)
+- **Prometheus exposition**: `GET /v1/metrics` returns `chat_requests_total` (labels: provider, status) and `chat_request_latency_seconds` (label: provider). Content-Type: `text/plain; version=0.0.4; charset=utf-8`. Scrape with Prometheus or `curl http://127.0.0.1:8000/v1/metrics`. Integration tests: `pytest tests/integration/test_metrics.py -v`
 
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
