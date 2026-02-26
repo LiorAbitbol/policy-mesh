@@ -68,7 +68,7 @@ Each implementation must include:
 - Assumptions made
 - Explicit statement of what was intentionally NOT implemented
 
-**Write the above into the task doc:** Before finishing, update `context/private/tasks/T-XXXX.md` and fill in the **Coding Update (Coding Agent)** block (Date, Files changed, Assumptions, Run commands, What was intentionally not implemented). This is the handoff to the Planner and Tester.
+**Write the above into the task doc:** Before finishing, update `context/private/tasks/T-XXXX.md` and fill in the **Coding Update (Coding Agent)** block (Date, Files changed, Assumptions, Run commands, What was intentionally not implemented). Include an **Assumptions** line (or "Assumptions (Coder):") listing any assumptions made so the Planner and Tester have them on the record. This is the handoff to the Planner and Tester.
 
 One task = one commit-sized change.
 
