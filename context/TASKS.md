@@ -16,25 +16,26 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
 - Done: `T-108` (Add GitHub Actions CI baseline)
-- In Progress: none
+- In Progress: `T-101` (Bootstrap FastAPI app and `/v1/health`)
 - Next: `T-101` (Bootstrap FastAPI app and `/v1/health`)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
 |---|---|---|---|---|---|
 | 1 | T-108 | Add GitHub Actions CI baseline | `done` | `planner` | `context/private/tasks/T-108.md` |
-| 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `todo` | `planner` | `context/private/tasks/T-101.md` |
-| 3 | T-109 | Add local Postgres setup and migration bootstrap | `todo` | `planner` | `context/private/tasks/T-109.md` |
-| 4 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
-| 5 | T-102 | Implement DecisionEngine with reason codes | `todo` | `planner` | `context/private/tasks/T-102.md` |
-| 6 | T-103 | Implement Ollama and OpenAI provider clients | `todo` | `planner` | `context/private/tasks/T-103.md` |
-| 7 | T-105 | Add `/v1/chat` orchestration service | `todo` | `planner` | `context/private/tasks/T-105.md` |
-| 8 | T-106 | Add metrics middleware + `/v1/metrics` | `todo` | `planner` | `context/private/tasks/T-106.md` |
-| 9 | T-107 | Add integration tests with mocked providers | `todo` | `planner` | `context/private/tasks/T-107.md` |
+| 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `in_progress` | `planner` | `context/private/tasks/T-101.md` |
+| 3 | T-110 | Add app container layer and healthcheck wiring | `todo` | `planner` | `context/private/tasks/T-110.md` |
+| 4 | T-109 | Add local Postgres setup and migration bootstrap | `todo` | `planner` | `context/private/tasks/T-109.md` |
+| 5 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
+| 6 | T-102 | Implement DecisionEngine with reason codes | `todo` | `planner` | `context/private/tasks/T-102.md` |
+| 7 | T-103 | Implement Ollama and OpenAI provider clients | `todo` | `planner` | `context/private/tasks/T-103.md` |
+| 8 | T-105 | Add `/v1/chat` orchestration service | `todo` | `planner` | `context/private/tasks/T-105.md` |
+| 9 | T-106 | Add metrics middleware + `/v1/metrics` | `todo` | `planner` | `context/private/tasks/T-106.md` |
+| 10 | T-107 | Add integration tests with mocked providers | `todo` | `planner` | `context/private/tasks/T-107.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
-  - Status: `todo`
+  - Status: `in_progress`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-101.md`
   - Acceptance: App starts and health endpoint returns 200.
@@ -43,6 +44,11 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-108.md`
   - Acceptance: PR/push workflow runs repo checks now and is ready to expand for Python tests.
+- T-110: Add app container layer and healthcheck wiring
+  - Status: `todo`
+  - Owner Role: `planner`
+  - Private Task Doc: `context/private/tasks/T-110.md`
+  - Acceptance: Docker image runs app and containerized health check verifies `/v1/health`.
 - T-109: Add local Postgres setup and migration bootstrap
   - Status: `todo`
   - Owner Role: `planner`
