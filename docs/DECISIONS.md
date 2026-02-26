@@ -199,6 +199,27 @@ Add `httpx` as a runtime dependency for Ollama and OpenAI provider clients (T-10
 
 ---
 
+## DEC-010: Runtime dependencies for audit (sqlalchemy, psycopg)
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Promote `sqlalchemy` and `psycopg[binary]` from dev extras to main (runtime) dependencies in pyproject.toml.
+
+### Why
+- The app imports `app.audit.repository` at startup (via chat route → chat_orchestrator → audit.service → audit.repository). That module imports SQLAlchemy and uses it when persisting audit events.
+- With these only in `[dev]`, `pip install .` in the Docker image did not install them, so the app crashed on startup with ModuleNotFoundError and the container smoke test failed.
+- Making them runtime deps ensures the container starts and the audit code path is loadable; when DATABASE_URL is not set, audit is a no-op.
+
+### Alternatives Considered
+- Lazy-import audit.repository only when persist_audit_event is called (adds complexity; still need sqlalchemy when audit is enabled).
+- Keep audit in a separate optional extra (would require two container images or conditional installs).
+
+### Risks
+- Slightly larger runtime image; acceptable for V1.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 
