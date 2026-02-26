@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  repo-sanity:
+    name: Repo Sanity Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required repository files
+        run: |
+          set -euo pipefail
+          required_files=(
+            "README.md"
+            "context/TASKS.md"
+            "docs/ARCHITECTURE.md"
+            "docs/DECISIONS.md"
+            "docs/STRUCTURE.md"
+          )
+
+          for path in "${required_files[@]}"; do
+            if [[ ! -f "${path}" ]]; then
+              echo "Missing required file: ${path}" >&2
+              exit 1
+            fi
+          done
+
+      - name: Block unresolved merge conflict markers
+        run: |
+          set -euo pipefail
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)' -- .; then
+            echo "Unresolved merge conflict markers detected." >&2
+            exit 1
+          fi
+
+      - name: Check trailing whitespace in tracked docs/workflow files
+        run: |
+          set -euo pipefail
+          files="$(git ls-files '*.md' '*.yml' '*.yaml')"
+          if [[ -z "${files}" ]]; then
+            echo "No markdown/yaml files found to check."
+            exit 0
+          fi
+
+          if printf '%s\n' "${files}" | xargs awk '/[[:blank:]]+$/{print FILENAME ":" FNR ":" $0; found=1} END{exit found}'; then
+            echo "No trailing whitespace detected."
+          else
+            echo "Trailing whitespace detected in listed files." >&2
+            exit 1
+          fi
+
+  python-tests:
+    name: Python Tests (when present)
+    runs-on: ubuntu-latest
+    needs:
+      - repo-sanity
+    if: ${{ hashFiles('app/**/*.py', 'tests/**/*.py') != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Placeholder for Python checks
+        run: |
+          set -euo pipefail
+          python --version
+          echo "Python sources detected. Add lint/test commands in follow-up tasks."

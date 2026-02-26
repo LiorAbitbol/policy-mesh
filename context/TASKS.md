@@ -15,14 +15,14 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: none
+- Done: `T-108` (Add GitHub Actions CI baseline)
 - In Progress: none
-- Next: `T-108` (Add GitHub Actions CI baseline)
+- Next: `T-101` (Bootstrap FastAPI app and `/v1/health`)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
 |---|---|---|---|---|---|
-| 1 | T-108 | Add GitHub Actions CI baseline | `todo` | `planner` | `context/private/tasks/T-108.md` |
+| 1 | T-108 | Add GitHub Actions CI baseline | `done` | `planner` | `context/private/tasks/T-108.md` |
 | 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `todo` | `planner` | `context/private/tasks/T-101.md` |
 | 3 | T-109 | Add local Postgres setup and migration bootstrap | `todo` | `planner` | `context/private/tasks/T-109.md` |
 | 4 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
@@ -39,7 +39,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Private Task Doc: `context/private/tasks/T-101.md`
   - Acceptance: App starts and health endpoint returns 200.
 - T-108: Add GitHub Actions CI baseline
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-108.md`
   - Acceptance: PR/push workflow runs repo checks now and is ready to expand for Python tests.

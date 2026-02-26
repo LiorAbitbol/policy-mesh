@@ -4,7 +4,7 @@
 This folder is the execution alignment contract for humans and AI tools.
 It defines scope, rules, and active tasks for the Hybrid AI Control Plane project.
 
-`RULES.md` and `AGENTS.md` in this folder are public pointer documents.  
+`RULES.md` and `AGENTS.md` in this folder are public pointer documents.
 Their canonical versions live in `context/private/`.
 
 This project uses AI-assisted development; detailed operational playbooks are intentionally maintained in private documentation.
