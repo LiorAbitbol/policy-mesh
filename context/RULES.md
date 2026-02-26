@@ -80,6 +80,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - No real network calls in tests.
 - Unit tests must be fast (`<1s` each).
 - Provider changes require integration tests (mocked HTTP).
+- When a task introduces a new runtime execution path (for example container, compose, or service startup behavior), CI coverage for that path must be added in the same task or tracked as an explicit follow-up task before the source task is considered fully closed.
 
 ## 9) Agent Operating Rules
 - Agents may only work on listed tasks.
