@@ -63,7 +63,7 @@ policy-mesh/
 ├── migrations/                      # Alembic migration environment and revisions
 │   ├── env.py                       # Alembic migration runtime setup
 │   └── versions/                    # Versioned migration scripts
-├── context/                         # Public execution contract and backlog
+├── .context/                         # Public execution contract and backlog
 │   ├── README.md                    # Context usage and contract overview
 │   ├── PROJECT.md                   # Product goals and architecture summary
 │   ├── SCOPE.md                     # In-scope/out-of-scope definition
@@ -90,7 +90,7 @@ policy-mesh/
 - Place new files in the smallest existing module that matches the task scope.
 - Keep API contracts in `app/api/schemas/`; update tests and docs for public schema changes.
 - Keep routing policy logic in `app/decision/` and provider logic in `app/providers/`.
-- Keep task execution details in `context/private/tasks/`; keep `context/TASKS.md` concise.
+- Keep task execution details in `.context/private/tasks/`; keep `.context/TASKS.md` concise.
 - Keep tests deterministic and isolated; do not use real provider network calls.
 - Keep CI workflow logic in `.github/workflows/` and expand checks task-by-task.
 

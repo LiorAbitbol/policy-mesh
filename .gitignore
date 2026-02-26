@@ -1,5 +1,5 @@
 # Context private (never commit)
-context/private/
+.context/private/
 
 # Python
 __pycache__/

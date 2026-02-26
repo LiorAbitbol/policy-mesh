@@ -5,10 +5,10 @@ This folder is the execution alignment contract for humans and AI tools.
 It defines scope, rules, and active tasks for the Hybrid AI Control Plane project.
 
 `RULES.md` and `AGENTS.md` in this folder are canonical tracked governance docs.
-`context/private/` may include supplemental local/operator notes and task execution records.
+`.context/private/` may include supplemental local/operator notes and task execution records.
 Private docs must not override or conflict with canonical tracked docs.
 
-This project uses AI-assisted development. Role and session-isolation workflow details are defined in `context/AGENTS.md`.
+This project uses AI-assisted development. Role and session-isolation workflow details are defined in `.context/AGENTS.md`.
 Project directory layout and file placement conventions are documented in `docs/STRUCTURE.md`.
 
 ## How To Use

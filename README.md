@@ -31,7 +31,7 @@ This repository currently contains governance/docs scaffolding and task definiti
 - Run with compose: `docker compose up -d app`
 - Health check: `curl http://127.0.0.1:8000/v1/health` -> `{"status":"ok"}`
 - Compose health status: `docker compose ps` (app service shows `healthy` when ready)
-- **Local override:** The committed `docker-compose.yml` does not load `.env` into the app container (so CI can run without a `.env` file). For local runs with `DATABASE_URL`, `OPENAI_API_KEY`, etc., add under the `app` service: `env_file: .env`. See `context/private/TEST_DOCKER.md` for full Docker test steps.
+- **Local override:** The committed `docker-compose.yml` does not load `.env` into the app container (so CI can run without a `.env` file). For local runs with `DATABASE_URL`, `OPENAI_API_KEY`, etc., add under the `app` service: `env_file: .env`. See `.context/private/TEST_DOCKER.md` for full Docker test steps.
 
 ## Local Postgres + Migrations (T-109)
 - Copy env: `cp .env.example .env` (edit `.env` if needed)
@@ -75,8 +75,8 @@ This repository currently contains governance/docs scaffolding and task definiti
 - `docs/DECISIONS.md` - Decision log and dependency decision template.
 
 ## Context and Workflow
-- `context/` contains public execution context (`PROJECT`, `SCOPE`, `TASKS`) and pointers.
-- `context/private/` contains canonical internal playbooks and task records.
+- `.context/` contains public execution context (`PROJECT`, `SCOPE`, `TASKS`) and pointers.
+- `.context/private/` contains canonical internal playbooks and task records.
 - AI-assisted development is used; detailed operational workflows are intentionally maintained in private docs.
 
 ## CI
@@ -87,11 +87,11 @@ This repository currently contains governance/docs scaffolding and task definiti
 
 ## Repository Layout (Top Level)
 - `.github/` - CI workflows.
-- `context/` - Public project context and pointers.
+- `.context/` - Public project context and pointers.
 - `docs/` - Architecture, structure, and decisions.
 - `README.md` - This file.
 
 ## Next Steps
-- Implement tasks in `context/TASKS.md` in order.
+- Implement tasks in `.context/TASKS.md` in order.
 - Keep one task per PR-sized change.
 - Update tests and docs with any interface or behavior changes.

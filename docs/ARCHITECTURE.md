@@ -66,4 +66,4 @@ flowchart LR
 
 ## Implementation Notes
 - Use `docs/STRUCTURE.md` for file and module placement.
-- Use `context/TASKS.md` + `context/private/tasks/` as execution source of truth.
+- Use `.context/TASKS.md` + `.context/private/tasks/` as execution source of truth.

@@ -4,12 +4,12 @@
 Define the non-negotiable engineering guardrails for V1 execution. This is the canonical, tracked rules document for humans and AI agents.
 
 ## Authority
-- `context/RULES.md` is the canonical source of truth.
-- `context/private/RULES.md` may contain supplemental local/operator notes only.
+- `.context/RULES.md` is the canonical source of truth.
+- `.context/private/RULES.md` may contain supplemental local/operator notes only.
 - Private notes must not override or conflict with this document.
 
 ## 1) Scope Discipline
-- Only tasks listed in `context/TASKS.md` may be implemented.
+- Only tasks listed in `.context/TASKS.md` may be implemented.
 - One task at a time: one task = one PR-sized, reviewable change.
 - No scope creep beyond V1.
 - Explicitly out of scope for V1:
@@ -47,7 +47,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 ## 4) Routing & Determinism
 - Routing must be deterministic: same input + same config = same decision.
 - Default routing behavior must be documented in:
-  - `context/PROJECT.md`
+  - `.context/PROJECT.md`
   - `README.md`
 - Any routing rule change requires a DecisionEngine unit test.
 - Thresholds must be configurable (no hard-coded limits).
@@ -106,8 +106,8 @@ Agents must stop and ask if:
 When unsure: stop, do not guess.
 
 ## 10) Task Definition & Lifecycle
-- Every task in `context/TASKS.md` must include: why, in-scope items, out-of-scope items, files expected to change, test requirements, and definition of done.
+- Every task in `.context/TASKS.md` must include: why, in-scope items, out-of-scope items, files expected to change, test requirements, and definition of done.
 - Every task must include a status field.
 - When work is complete, mark the task status as `done`.
-- Once the Coder and Tester outputs have been validated (acceptance criteria met, task doc updated), record completion in the task doc and `context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
-- Completed tasks must be archived under `context/private/`.
+- Once the Coder and Tester outputs have been validated (acceptance criteria met, task doc updated), record completion in the task doc and `.context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
+- Completed tasks must be archived under `.context/private/`.
