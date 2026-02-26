@@ -61,18 +61,34 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - repo-sanity
-    if: ${{ hashFiles('app/**/*.py', 'tests/**/*.py') != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Detect Python sources
+        id: detect-python
+        run: |
+          set -euo pipefail
+          py_file_count="$(git ls-files 'app/**/*.py' 'tests/**/*.py' | wc -l | tr -d ' ')"
+          if [[ "${py_file_count}" -gt 0 ]]; then
+            echo "has_python=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_python=false" >> "${GITHUB_OUTPUT}"
+          fi
+
       - name: Setup Python
+        if: ${{ steps.detect-python.outputs.has_python == 'true' }}
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Placeholder for Python checks
+        if: ${{ steps.detect-python.outputs.has_python == 'true' }}
         run: |
           set -euo pipefail
           python --version
           echo "Python sources detected. Add lint/test commands in follow-up tasks."
+
+      - name: Skip Python checks (no Python files detected)
+        if: ${{ steps.detect-python.outputs.has_python != 'true' }}
+        run: echo "No Python files under app/ or tests/. Skipping python-tests job steps."
