@@ -138,6 +138,27 @@ Use Alembic for database schema migrations in V1.
 
 ---
 
+## DEC-007: FastAPI Bootstrap and Minimal Test Tooling
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Adopt `fastapi` and `uvicorn` as the minimal runtime stack for V1 API bootstrap, and `pytest` plus `httpx` as minimal development/testing dependencies for endpoint validation in T-101.
+
+### Why
+- Enables a deterministic, lightweight `/v1/health` API bootstrap aligned with V1 architecture.
+- Establishes a reproducible local setup from fresh clone for running the app and integration-style health test.
+
+### Alternatives Considered
+- Delay dependency declaration until later tasks.
+- Use a different web framework stack for initial endpoint bootstrap.
+
+### Risks
+- Early dependency choices may constrain future framework changes.
+- Unpinned dependency ranges can introduce upstream behavior drift over time.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 

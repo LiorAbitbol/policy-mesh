@@ -15,15 +15,15 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108` (Add GitHub Actions CI baseline)
-- In Progress: `T-101` (Bootstrap FastAPI app and `/v1/health`)
-- Next: `T-101` (Bootstrap FastAPI app and `/v1/health`)
+- Done: `T-108` (Add GitHub Actions CI baseline), `T-101` (Bootstrap FastAPI app and `/v1/health`)
+- In Progress: none
+- Next: `T-110` (Add app container layer and healthcheck wiring)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
 |---|---|---|---|---|---|
 | 1 | T-108 | Add GitHub Actions CI baseline | `done` | `planner` | `context/private/tasks/T-108.md` |
-| 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `in_progress` | `planner` | `context/private/tasks/T-101.md` |
+| 2 | T-101 | Bootstrap FastAPI app and `/v1/health` | `done` | `planner` | `context/private/tasks/T-101.md` |
 | 3 | T-110 | Add app container layer and healthcheck wiring | `todo` | `planner` | `context/private/tasks/T-110.md` |
 | 4 | T-109 | Add local Postgres setup and migration bootstrap | `todo` | `planner` | `context/private/tasks/T-109.md` |
 | 5 | T-104 | Persist `AuditEvent` per request | `todo` | `planner` | `context/private/tasks/T-104.md` |
@@ -35,7 +35,7 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
-  - Status: `in_progress`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `context/private/tasks/T-101.md`
   - Acceptance: App starts and health endpoint returns 200.

@@ -18,6 +18,14 @@ Policy Mesh routes chat requests deterministically between local and cloud provi
 ## Current Status
 This repository currently contains governance/docs scaffolding and task definitions. Application code is implemented incrementally through task-based workflow.
 
+## Local Run/Test (T-101)
+- Create venv: `python3 -m venv .venv`
+- Activate venv: `source .venv/bin/activate`
+- Install deps: `python -m pip install --upgrade pip && pip install -e ".[dev]"`
+- Run app: `uvicorn app.main:app --reload`
+- Health check: `curl http://127.0.0.1:8000/v1/health` -> `{"status":"ok"}`
+- Run health test: `pytest tests/integration/test_health.py -v`
+
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.
@@ -29,8 +37,9 @@ This repository currently contains governance/docs scaffolding and task definiti
 - AI-assisted development is used; detailed operational workflows are intentionally maintained in private docs.
 
 ## CI
-- Planned in task `T-108` (`context/TASKS.md`).
-- Not implemented yet in the current repository state.
+- GitHub Actions workflow: `.github/workflows/ci.yml`
+- Runs on pull requests and pushes to `main`.
+- Includes baseline repo sanity checks and conditional Python test steps.
 
 ## Repository Layout (Top Level)
 - `.github/` - CI workflows.
