@@ -81,6 +81,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - Unit tests must be fast (`<1s` each).
 - Provider changes require integration tests (mocked HTTP).
 - When a task introduces a new runtime execution path (for example container, compose, or service startup behavior), CI coverage for that path must be added in the same task or tracked as an explicit follow-up task before the source task is considered fully closed.
+- **When a task adds or expands the automated test suite, CI must run those tests.** Add or update the CI workflow (e.g. run pytest in the python-tests job) in the same task or as an explicit follow-up task before the source task is considered fully closed. A task that introduces tests is not done until CI executes them.
 
 ## 9) Agent Operating Rules
 - Agents may only work on listed tasks.
