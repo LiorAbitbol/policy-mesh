@@ -68,6 +68,8 @@ Each implementation must include:
 - Assumptions made
 - Explicit statement of what was intentionally NOT implemented
 
+**Write the above into the task doc:** Before finishing, update `context/private/tasks/T-XXXX.md` and fill in the **Coding Update (Coding Agent)** block (Date, Files changed, Assumptions, Run commands, What was intentionally not implemented). This is the handoff to the Planner and Tester.
+
 One task = one commit-sized change.
 
 ## 3. Claude - Testing / Validation Role
@@ -96,6 +98,8 @@ One task = one commit-sized change.
 - No raw prompt persistence
 - Metrics/logging not broken
 
+**Write the above into the task doc:** Before finishing, update `context/private/tasks/T-XXXX.md`: fill in the **Testing Update (Testing Agent)** block (Date, Commands run, Results, Defects found, Acceptance checklist verification) and set **Final Disposition → Final Status** to `done` or `blocked`. This is the handoff to the Planner.
+
 ## Workflow
 1. Codex defines task.
 2. Cursor implements task.
@@ -115,6 +119,13 @@ For each task, use three separate AI sessions:
 Do not reuse one session for multiple roles in the same task.
 
 Each role session must consume the prior role's handoff from `context/private/tasks/T-XXXX.md` and append its own update block.
+
+## Handoff to Planner (automated via task doc)
+**Default (automated):** Coder and Tester **must** write their output into the task doc (Coding Update / Testing Update blocks and, for Tester, Final Disposition). The user then only says e.g. **"Coder done for T-112"** or **"Tester done for T-112"** or **"Both done for T-112"**. The Planner reads `context/private/tasks/T-XXXX.md`, records any missing details if needed, updates `context/TASKS.md`, and completes the workflow (e.g. git commit). No paste required.
+
+**Fallback:** If the task doc could not be updated (e.g. Coder/Tester ran in an environment without write access to `context/private/`), paste the agent’s output (assumptions, notes, files changed, run commands) into the Planner session. The Planner will record it in the task doc and proceed.
+
+The Planner does not see other agents’ sessions; handoff is via the task doc or explicit paste.
 
 ## Stop Conditions (All Roles)
 Stop and request clarification if:
