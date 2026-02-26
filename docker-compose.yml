@@ -20,6 +20,8 @@ services:
     build: .
     ports:
       - "8000:8000"
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
     healthcheck:
       test:
         [
@@ -33,5 +35,13 @@ services:
       start_period: 15s
       retries: 3
 
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
 volumes:
   postgres_data:
+  ollama_data:

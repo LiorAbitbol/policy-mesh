@@ -179,6 +179,26 @@ Add `alembic`, `sqlalchemy`, and `psycopg[binary]` as dev dependencies for runni
 
 ---
 
+## DEC-009: HTTP client for provider adapters (httpx)
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Add `httpx` as a runtime dependency for Ollama and OpenAI provider clients (T-103).
+
+### Why
+- Provider adapters need an HTTP client for POST requests to Ollama (/api/chat) and OpenAI (chat completions).
+- httpx offers a sync API, configurable timeouts, and is easy to mock in tests (inject client or mock).
+
+### Alternatives Considered
+- `requests` (widely used; httpx has similar API and better async path if needed later).
+- `urllib` only (more boilerplate and no built-in timeout abstraction).
+
+### Risks
+- Additional runtime dependency; keep version pinned in pyproject.toml to avoid drift.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 

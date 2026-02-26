@@ -50,3 +50,29 @@ def get_policy_config() -> PolicyConfig:
         cost_max_prompt_length_for_local=cost_max_prompt_length_for_local,
         default_provider=default_provider,
     )
+
+
+def get_ollama_base_url() -> str:
+    """Ollama API base URL (default http://localhost:11434). From env OLLAMA_BASE_URL."""
+    url = (os.getenv("OLLAMA_BASE_URL") or "http://localhost:11434").strip()
+    return url.rstrip("/")
+
+
+def get_openai_api_key() -> str | None:
+    """OpenAI API key from env. No default; no secrets in code."""
+    return os.getenv("OPENAI_API_KEY") or None
+
+
+def get_openai_base_url() -> str | None:
+    """Optional OpenAI API base URL override (e.g. for proxy). From env OPENAI_BASE_URL."""
+    url = (os.getenv("OPENAI_BASE_URL") or "").strip().rstrip("/")
+    return url or None
+
+
+def get_provider_timeout_seconds() -> float:
+    """Provider HTTP timeout in seconds (default 60.0). From env PROVIDER_TIMEOUT_SECONDS."""
+    raw = os.getenv("PROVIDER_TIMEOUT_SECONDS", "60").strip()
+    try:
+        return max(1.0, float(raw))
+    except ValueError:
+        return 60.0

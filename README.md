@@ -47,6 +47,13 @@ This repository currently contains governance/docs scaffolding and task definiti
 - Config via env: `SENSITIVITY_KEYWORDS` (comma-separated), `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` (int), `DEFAULT_PROVIDER` (`openai` or `local`). Defaults: empty keywords, 1000, openai.
 - Unit tests: `pytest tests/unit/test_decision_engine.py tests/unit/test_reason_codes.py -v`
 
+## Providers (T-103)
+- **Ollama**: Local provider. Run in container (`docker compose up -d ollama`) or on host; default URL `http://localhost:11434`. In compose, app gets `OLLAMA_BASE_URL=http://ollama:11434` to call containerized Ollama. Pull a model after Ollama is up: `docker compose exec ollama ollama pull llama2` (or use host Ollama).
+- **OpenAI**: Set `OPENAI_API_KEY` in env (no default; no secrets in code). Optional `OPENAI_BASE_URL` for proxy.
+- **Timeouts**: `PROVIDER_TIMEOUT_SECONDS` (default 60).
+- **Full demo with compose**: `docker compose up -d postgres ollama app` then call `/v1/chat` (or use scripts). Ensure `.env` has `DATABASE_URL` and optionally `OPENAI_API_KEY` for OpenAI routing.
+- Provider integration tests (mocked HTTP): `pytest tests/integration/test_providers.py -v`
+
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.
