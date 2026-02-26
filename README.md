@@ -31,6 +31,7 @@ This repository currently contains governance/docs scaffolding and task definiti
 - Run with compose: `docker compose up -d app`
 - Health check: `curl http://127.0.0.1:8000/v1/health` -> `{"status":"ok"}`
 - Compose health status: `docker compose ps` (app service shows `healthy` when ready)
+- **Local override:** The committed `docker-compose.yml` does not load `.env` into the app container (so CI can run without a `.env` file). For local runs with `DATABASE_URL`, `OPENAI_API_KEY`, etc., add under the `app` service: `env_file: .env`. See `context/private/TEST_DOCKER.md` for full Docker test steps.
 
 ## Local Postgres + Migrations (T-109)
 - Copy env: `cp .env.example .env` (edit `.env` if needed)
