@@ -54,6 +54,17 @@ This repository currently contains governance/docs scaffolding and task definiti
 - **Full demo with compose**: `docker compose up -d postgres ollama app` then call `/v1/chat` (or use scripts). Ensure `.env` has `DATABASE_URL` and optionally `OPENAI_API_KEY` for OpenAI routing.
 - Provider integration tests (mocked HTTP): `pytest tests/integration/test_providers.py -v`
 
+## POST /v1/chat (T-105)
+- **Request**: `POST /v1/chat` with JSON body `{ "messages": [ { "role": "user", "content": "..." } ], "model": null }`. `messages` is required (at least one); `model` is optional (provider default if omitted).
+- **Response**: `{ "provider": "local"|"openai", "reason_codes": ["..."], "content": "..." }` on success, or `"content": null, "error": "..."` on provider failure. Always includes `provider` and `reason_codes`.
+- **Example**:
+  ```bash
+  curl -X POST http://127.0.0.1:8000/v1/chat \
+    -H "Content-Type: application/json" \
+    -d '{"messages":[{"role":"user","content":"Hello"}]}'
+  ```
+- Flow: decision → provider call → audit write → metrics hook → response. Integration tests: `pytest tests/integration/test_chat_flow.py -v`
+
 ## Documentation Map
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.

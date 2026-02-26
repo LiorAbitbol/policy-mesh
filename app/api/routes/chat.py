@@ -1,0 +1,14 @@
+"""POST /v1/chat: validate body, call orchestrator, return response."""
+
+from fastapi import APIRouter
+
+from app.api.schemas.chat import ChatRequest, ChatResponse
+from app.services.chat_orchestrator import handle_chat_request
+
+router = APIRouter()
+
+
+@router.post("/v1/chat", response_model=ChatResponse)
+def post_chat(body: ChatRequest) -> ChatResponse:
+    """Chat endpoint: decision → provider → audit → response."""
+    return handle_chat_request(body)
