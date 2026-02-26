@@ -45,7 +45,7 @@ This repository currently contains governance/docs scaffolding and task definiti
 ## CI
 - GitHub Actions workflow: `.github/workflows/ci.yml`
 - Runs on pull requests and pushes to `main`.
-- Includes baseline repo sanity checks and conditional Python test steps.
+- Includes baseline repo sanity checks, conditional Python test steps, and container smoke validation (build app image, run compose app, assert `/v1/health`).
 
 ## Repository Layout (Top Level)
 - `.github/` - CI workflows.

@@ -92,3 +92,47 @@ jobs:
       - name: Skip Python checks (no Python files detected)
         if: ${{ steps.detect-python.outputs.has_python != 'true' }}
         run: echo "No Python files under app/ or tests/. Skipping python-tests job steps."
+
+  container-smoke:
+    name: Container Smoke
+    runs-on: ubuntu-latest
+    needs:
+      - repo-sanity
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build app image
+        run: docker build -t policy-mesh-app .
+
+      - name: Start app service
+        run: docker compose up -d app
+
+      - name: Wait for readiness
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 15); do
+            if curl -sf http://127.0.0.1:8000/v1/health -o /tmp/health.json 2>/dev/null; then
+              break
+            fi
+            if [[ "$i" -eq 15 ]]; then
+              echo "Health endpoint not ready after 15 attempts" >&2
+              exit 1
+            fi
+            sleep 2
+          done
+
+      - name: Assert health response
+        run: |
+          set -euo pipefail
+          body="$(cat /tmp/health.json)"
+          expected='{"status":"ok"}'
+          if [[ "$body" != "$expected" ]]; then
+            echo "Expected: $expected" >&2
+            echo "Got:      $body" >&2
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
