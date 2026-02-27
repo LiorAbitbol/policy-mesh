@@ -10,7 +10,9 @@ Define the canonical role model and workflow for AI-assisted development session
 
 ## Role Definitions
 
-## 1. Codex - Planner / Reasoning Role
+The three roles below are fulfilled by AI agents (any compatible model or tool). Names are role-based, not tied to a specific LLM or product.
+
+## 1. Planner
 
 **Responsibility**
 - Break down work into tasks with explicit scope.
@@ -43,12 +45,16 @@ Every task definition/handoff must include:
 - Test requirements
 - Stop conditions
 
-## 2. Cursor - Implementer / Coding Role
+## 2. Coder
 
 **Responsibility**
 - Implement exactly one task at a time.
 - Make minimal, targeted changes.
 - Follow acceptance criteria precisely.
+
+**Pre-handoff hygiene**
+- Before filling the Coding Update block or handing off to the tester, run the project's whitespace/style check (at minimum `git diff --check`) and fix trivial issues (trailing spaces, extra blank line at EOF, etc.) so the diff is clean.
+- Ensure the working tree is clean and all tests relevant to the task are passing.
 
 **May modify**
 - Implementation/config files required by the active task (for example: `app/**`, `.github/workflows/**`, `scripts/**`, `docker-compose.yml`, and task-required docs)
@@ -72,13 +78,18 @@ Each implementation must include:
 
 One task = one commit-sized change.
 
-## 3. Claude - Testing / Validation Role
+## 3. Tester
 
 **Responsibility**
 - Validate implementation against acceptance criteria.
 - Add or update tests.
 - Identify edge cases and defects.
 - Ensure deterministic behavior.
+
+**Task doc responsibilities**
+- Testing work is **not considered complete** until the tester has:
+  - Filled in the **Testing Update (Testing Agent)** block in `.context/private/tasks/T-XXXX.md` (Date, Commands run, Results, Defects found, Acceptance checklist verification).
+  - Set **Final Disposition → Final Status** to `done` or `blocked`, with any remaining follow-ups or scope concerns noted.
 
 **May modify**
 - `tests/**`
@@ -101,10 +112,10 @@ One task = one commit-sized change.
 **Write the above into the task doc:** Before finishing, update `.context/private/tasks/T-XXXX.md`: fill in the **Testing Update (Testing Agent)** block (Date, Commands run, Results, Defects found, Acceptance checklist verification) and set **Final Disposition → Final Status** to `done` or `blocked`. This is the handoff to the Planner.
 
 ## Workflow
-1. Codex defines task.
-2. Cursor implements task.
-3. Claude validates task.
-4. If defects are found, Cursor fixes within task scope.
+1. Planner defines task.
+2. Coder implements task.
+3. Tester validates task.
+4. If defects are found, Coder fixes within task scope.
 5. Task is complete when validation checklist passes.
 6. Once Coder and Tester are validated, record completion in the task doc and `.context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
 
