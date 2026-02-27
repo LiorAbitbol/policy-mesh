@@ -196,8 +196,8 @@ Replace `REPLACE_WITH_REQUEST_ID` with the `request_id` from the previous respon
 
 Open in your browser:
 
-- **http://localhost:8000/**  
-  or  
+- **http://localhost:8000/**
+  or
 - **http://localhost:8000/ui**
 
 You should see the Policy Mesh page with:
