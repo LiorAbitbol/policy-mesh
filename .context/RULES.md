@@ -46,9 +46,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 
 ## 4) Routing & Determinism
 - Routing must be deterministic: same input + same config = same decision.
-- Default routing behavior must be documented in:
-  - `.context/PROJECT.md`
-  - `README.md`
+- Default routing behavior must be documented in `README.md` and/or `docs/ENGINE_RULES.md`.
 - Any routing rule change requires a DecisionEngine unit test.
 - Thresholds must be configurable (no hard-coded limits).
 

@@ -13,11 +13,11 @@ Project directory layout and file placement conventions are documented in `docs/
 
 ## How To Use
 Read in this order:
-1. `PROJECT.md`
-2. `SCOPE.md`
-3. `RULES.md`
-4. `TASKS.md`
-5. `AGENTS.md`
+1. `PROJECT.md` — quick pointer to product and current state
+2. `SCOPE.md` — in/out of scope and boundaries
+3. `RULES.md` — engineering guardrails
+4. `TASKS.md` — backlog and status
+5. `AGENTS.md` — role model and workflow
 
 ## Contract
 - `SCOPE.md` defines boundaries.
