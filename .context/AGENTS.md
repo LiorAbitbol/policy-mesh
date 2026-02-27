@@ -62,6 +62,7 @@ In addition, the Planner must embed role-specific handoff prompts in the task fi
 
 **May modify**
 - Implementation/config files required by the active task (for example: `app/**`, `.github/workflows/**`, `scripts/**`, `docker-compose.yml`, and task-required docs)
+- `.context/private/tasks/T-XXXX.md` — only the **Coding Update (Coding Agent)** block for the active task (required for handoff)
 
 **Must NOT**
 - Change scope
@@ -98,6 +99,7 @@ One task = one commit-sized change.
 **May modify**
 - `tests/**`
 - Minor testability fixes if explicitly allowed in the active task
+- `.context/private/tasks/T-XXXX.md` — only the **Testing Update (Testing Agent)** block and **Final Disposition** for the active task (required for handoff)
 
 **Must NOT**
 - Introduce new features
