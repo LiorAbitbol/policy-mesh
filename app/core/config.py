@@ -26,12 +26,21 @@ class PolicyConfig:
     sensitivity_keywords: tuple[str, ...]
     cost_max_prompt_length_for_local: int
     default_provider: str  # "local" | "openai"
+    cost_max_usd_for_local: float | None
+    openai_input_usd_per_1k_tokens: float | None
+    cost_chars_per_token: int
 
 
 def get_policy_config() -> PolicyConfig:
     """
     Load policy config from environment.
-    Defaults: empty sensitivity keywords, 1000 max prompt length for local, default_provider=openai.
+    Defaults:
+    - sensitivity_keywords: empty tuple
+    - cost_max_prompt_length_for_local: 1000
+    - default_provider: "openai"
+    - cost_max_usd_for_local: None (disabled)
+    - openai_input_usd_per_1k_tokens: None (disabled)
+    - cost_chars_per_token: 4
     """
     raw_kw = os.getenv("SENSITIVITY_KEYWORDS", "")
     sensitivity_keywords = tuple(
@@ -45,10 +54,39 @@ def get_policy_config() -> PolicyConfig:
     default_provider = (os.getenv("DEFAULT_PROVIDER", "openai") or "openai").strip().lower()
     if default_provider not in ("local", "openai"):
         default_provider = "openai"
+
+    # Optional easy-mode USD cost gate (T-204). When either value is missing/invalid,
+    # USD-mode is effectively disabled and the engine falls back to length-based cost.
+    def _parse_positive_float(env_var: str) -> float | None:
+        raw = os.getenv(env_var, "").strip()
+        if not raw:
+            return None
+        try:
+            value = float(raw)
+        except ValueError:
+            return None
+        return value if value > 0.0 else None
+
+    cost_max_usd_for_local = _parse_positive_float("COST_MAX_USD_FOR_LOCAL")
+    openai_input_usd_per_1k_tokens = _parse_positive_float(
+        "OPENAI_INPUT_USD_PER_1K_TOKENS"
+    )
+
+    raw_chars_per_token = os.getenv("COST_CHARS_PER_TOKEN", "4").strip()
+    try:
+        cost_chars_per_token = int(raw_chars_per_token)
+    except ValueError:
+        cost_chars_per_token = 4
+    if cost_chars_per_token <= 0:
+        cost_chars_per_token = 4
+
     return PolicyConfig(
         sensitivity_keywords=sensitivity_keywords,
         cost_max_prompt_length_for_local=cost_max_prompt_length_for_local,
         default_provider=default_provider,
+        cost_max_usd_for_local=cost_max_usd_for_local,
+        openai_input_usd_per_1k_tokens=openai_input_usd_per_1k_tokens,
+        cost_chars_per_token=cost_chars_per_token,
     )
 
 

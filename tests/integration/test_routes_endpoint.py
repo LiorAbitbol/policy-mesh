@@ -55,4 +55,8 @@ def test_get_routes_does_not_expose_secrets() -> None:
         "sensitivity_keyword_count",
         "cost_max_prompt_length_for_local",
         "default_provider",
+        "usd_cost_mode_active",
+        "cost_max_usd_for_local",
+        "openai_input_usd_per_1k_tokens",
+        "cost_chars_per_token",
     }

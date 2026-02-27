@@ -63,9 +63,20 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
 - Run migrations: `alembic upgrade head`
 - Verify revision: `alembic current`
 
-## Routing / Decision engine (T-102)
-- Order: **sensitivity** (keyword in prompt → local) → **cost** (prompt length under threshold → local) → **default** (openai).
-- Config via env: `SENSITIVITY_KEYWORDS` (comma-separated), `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` (int), `DEFAULT_PROVIDER` (`openai` or `local`). Defaults: empty keywords, 1000, openai.
+## Routing / Decision engine (T-102, T-204)
+- Order: **sensitivity** (keyword in prompt → local) → **cost** → **default** (openai).
+- Base config via env: `SENSITIVITY_KEYWORDS` (comma-separated), `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` (int), `DEFAULT_PROVIDER` (`openai` or `local`). Defaults: empty keywords, 1000, openai.
+- **Easy-mode USD cost threshold (T-204)**:
+  - Optional USD-mode config lets you say “prefer local when estimated OpenAI input cost ≤ $X” using a simple heuristic (no tokenization dependency).
+  - Env vars:
+    - `COST_MAX_USD_FOR_LOCAL` (float, USD): maximum estimated OpenAI input cost for which local is preferred.
+    - `OPENAI_INPUT_USD_PER_1K_TOKENS` (float, USD per 1K input tokens): derived from provider pricing (e.g. `$1.50 per 1M tokens` → `1.50 / 1000 = 0.0015` per 1K).
+    - `COST_CHARS_PER_TOKEN` (int, default 4): heuristic such that `tokens ≈ chars / COST_CHARS_PER_TOKEN`.
+  - When **both** `COST_MAX_USD_FOR_LOCAL` and `OPENAI_INPUT_USD_PER_1K_TOKENS` are set, the DecisionEngine:
+    - Estimates `tokens ≈ prompt_length / COST_CHARS_PER_TOKEN`.
+    - Estimates `cost_usd ≈ (tokens / 1000) * OPENAI_INPUT_USD_PER_1K_TOKENS`.
+    - Prefers local when `cost_usd <= COST_MAX_USD_FOR_LOCAL`.
+  - When USD config is **not** set, the engine falls back to the legacy character-threshold behavior using `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` only.
 - Unit tests: `pytest tests/unit/test_decision_engine.py tests/unit/test_reason_codes.py -v`
 
 ## Providers (T-103)
@@ -94,8 +105,11 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
   ```
 - Integration tests: `pytest tests/integration/test_audit_endpoint.py -v`
 
-## GET /v1/routes (T-202)
-- **Effective policy view**: `GET /v1/routes` returns the current routing policy (read-only). No API keys, env URLs, or secrets. Response includes: `rule_order` (e.g. `["sensitivity", "cost", "default"]`), `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `default_provider`. Uses `get_policy_config()` as single source of truth.
+## GET /v1/routes (T-202, T-204)
+- **Effective policy view**: `GET /v1/routes` returns the current routing policy (read-only). No API keys, env URLs, or secrets.
+- Response includes at least: `rule_order` (e.g. `["sensitivity", "cost", "default"]`), `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `default_provider`.
+- With T-204, it also surfaces the cost policy fields from config: whether USD-mode is active, the configured USD threshold (if any), the OpenAI input price per 1K tokens (if set), and the chars-per-token heuristic used for the estimate.
+- Uses `get_policy_config()` as single source of truth.
 - Example:
   ```bash
   curl http://127.0.0.1:8000/v1/routes

@@ -32,8 +32,14 @@ def decide(
     if sensitivity_match(prompt_text, config.sensitivity_keywords):
         return {"provider": "local", "reason_codes": [SENSITIVE_KEYWORD_MATCH]}
 
-    # 2. Cost: prompt length under threshold → prefer local
-    if cost_prefer_local(prompt_length, config.cost_max_prompt_length_for_local):
+    # 2. Cost: prefer local when under configured cost threshold (USD-mode or length-mode).
+    if cost_prefer_local(
+        prompt_length=prompt_length,
+        cost_max_prompt_length_for_local=config.cost_max_prompt_length_for_local,
+        cost_max_usd_for_local=config.cost_max_usd_for_local,
+        openai_input_usd_per_1k_tokens=config.openai_input_usd_per_1k_tokens,
+        cost_chars_per_token=config.cost_chars_per_token,
+    ):
         return {"provider": "local", "reason_codes": [COST_PREFER_LOCAL]}
 
     # 3. Default: openai (or config.default_provider)

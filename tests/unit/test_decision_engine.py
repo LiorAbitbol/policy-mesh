@@ -15,11 +15,17 @@ def _config(
     keywords: tuple[str, ...] = (),
     max_length: int = 1000,
     default_provider: str = "openai",
+    cost_max_usd_for_local: float | None = None,
+    openai_input_usd_per_1k_tokens: float | None = None,
+    cost_chars_per_token: int = 4,
 ) -> PolicyConfig:
     return PolicyConfig(
         sensitivity_keywords=keywords,
         cost_max_prompt_length_for_local=max_length,
         default_provider=default_provider,
+        cost_max_usd_for_local=cost_max_usd_for_local,
+        openai_input_usd_per_1k_tokens=openai_input_usd_per_1k_tokens,
+        cost_chars_per_token=cost_chars_per_token,
     )
 
 
@@ -99,3 +105,48 @@ def test_every_decision_has_provider_and_reason_codes() -> None:
         assert result["provider"] in ("local", "openai")
         assert isinstance(result["reason_codes"], list)
         assert len(result["reason_codes"]) >= 1
+
+
+def test_cost_usd_mode_under_threshold_returns_local() -> None:
+    """USD-mode: estimated cost under threshold → provider=local, COST_PREFER_LOCAL."""
+    # USD-mode active when both cost_max_usd_for_local and openai_input_usd_per_1k_tokens are set.
+    config = _config(
+        keywords=(),
+        max_length=10_000,
+        cost_max_usd_for_local=0.05,
+        openai_input_usd_per_1k_tokens=0.02,
+        cost_chars_per_token=4,
+    )
+    # prompt_length=4_000 chars → tokens≈1_000 → cost≈(1000/1000)*0.02 = $0.02 < $0.05
+    result = decide(prompt_text="x" * 4000, prompt_length=4000, config=config)
+    assert result["provider"] == "local"
+    assert result["reason_codes"] == [COST_PREFER_LOCAL]
+
+
+def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
+    """USD-mode: estimated cost over threshold → default provider with DEFAULT_OPENAI reason code."""
+    config = _config(
+        keywords=(),
+        max_length=10_000,
+        default_provider="openai",
+        cost_max_usd_for_local=0.05,
+        openai_input_usd_per_1k_tokens=0.02,
+        cost_chars_per_token=4,
+    )
+    # prompt_length=12_000 chars → tokens≈3_000 → cost≈(3000/1000)*0.02 = $0.06 > $0.05
+    result = decide(prompt_text="x" * 12_000, prompt_length=12_000, config=config)
+    assert result["provider"] == "openai"
+    assert result["reason_codes"] == [DEFAULT_OPENAI]
+
+
+def test_cost_fallback_to_length_mode_when_usd_config_missing() -> None:
+    """When USD config is unset, cost branch behaves like legacy character-threshold mode."""
+    config = _config(keywords=(), max_length=50)
+    # Under threshold → local
+    under = decide(prompt_text="x" * 25, prompt_length=25, config=config)
+    assert under["provider"] == "local"
+    assert under["reason_codes"] == [COST_PREFER_LOCAL]
+    # Over threshold → default (openai)
+    over = decide(prompt_text="x" * 100, prompt_length=100, config=config)
+    assert over["provider"] == "openai"
+    assert over["reason_codes"] == [DEFAULT_OPENAI]
