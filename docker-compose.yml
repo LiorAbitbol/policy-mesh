@@ -17,11 +17,15 @@ services:
       retries: 5
 
   app:
+    env_file:
+      - .env
     build: .
     ports:
       - "8000:8000"
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
+      # Override so the app container reaches Postgres by service name (not localhost).
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-policy_mesh}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-policy_mesh}
     healthcheck:
       test:
         [
