@@ -87,6 +87,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - Agents may only work on listed tasks.
 - Agents must not expand scope.
 - Planner role is documentation/scope-only; implementation changes must be performed by the Implementer role.
+- **Planner must generate detailed prompts for the Coder and Tester agents and embed those prompts in the task file** (`.context/private/tasks/T-XXXX.md`) so handoff is self-contained; each role reads copy-paste-ready instructions from the task doc.
 - Planner must not modify implementation/config files (including CI workflows, scripts, and runtime code) unless the user explicitly approves an exception for that session.
 - Every agent response must include:
   - Task ID

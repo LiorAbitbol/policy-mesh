@@ -45,6 +45,10 @@ Every task definition/handoff must include:
 - Test requirements
 - Stop conditions
 
+In addition, the Planner must embed role-specific handoff prompts in the task file (`.context/private/tasks/T-XXXX.md`):
+- Handoff sections for Coder and Tester should point back to the task's **Scope**, **Expected Files To Change**, **Acceptance Criteria**, and **Test Requirements** instead of duplicating them.
+- Each handoff must end with a short per-role **"Before marking done" checklist** covering the required fields in the Coding/Testing Update blocks and, for Tester, the Final Disposition.
+
 ## 2. Coder
 
 **Responsibility**
