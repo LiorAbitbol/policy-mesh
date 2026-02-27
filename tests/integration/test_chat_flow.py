@@ -5,6 +5,7 @@ no real network calls. Coverage: route behavior (local + openai success), fallba
 (provider failure → error + audit failure_category), audit write assertions, schema validation.
 """
 
+import re
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
@@ -31,6 +32,8 @@ def test_chat_local_happy_path_returns_provider_reason_codes_content() -> None:
 
     assert response.status_code == 200
     data = response.json()
+    assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
+    assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "local"
     assert data["reason_codes"] == ["cost_prefer_local"]
     assert data["content"] == "Hello from Ollama"
@@ -65,6 +68,8 @@ def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
 
     assert response.status_code == 200
     data = response.json()
+    assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
+    assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "openai"
     assert data["reason_codes"] == ["default_openai"]
     assert data["content"] == "Hello from OpenAI"
@@ -103,6 +108,8 @@ def test_chat_provider_failure_returns_error_and_audit_with_failure_category() -
 
     assert response.status_code == 200
     data = response.json()
+    assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
+    assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "openai"
     assert data["reason_codes"] == ["default_openai"]
     assert data.get("content") is None

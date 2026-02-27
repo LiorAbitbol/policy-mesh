@@ -158,6 +158,12 @@ curl -X POST http://127.0.0.1:8000/v1/chat \
 
 To force local (Ollama) routing, set `DEFAULT_PROVIDER=local` in `.env` (and ensure the app service loads it). Open **http://127.0.0.1:8000/docs** to use the interactive API UI.
 
+The `/v1/chat` response includes a `request_id` field (and `X-Request-Id` header). When audit is enabled (DATABASE_URL set + migrations applied), you can fetch the corresponding safe audit event view (no raw prompt) via:
+
+```bash
+curl http://127.0.0.1:8000/v1/audit/<request_id>
+```
+
 ---
 
 ## Quick reference

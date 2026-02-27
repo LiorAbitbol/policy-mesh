@@ -82,12 +82,14 @@ def handle_chat_request(body: ChatRequest) -> ChatResponse:
 
     if result.get("success"):
         return ChatResponse(
+            request_id=request_id,
             provider=provider_key,
             reason_codes=reason_codes,
             content=result.get("content", ""),
             error=None,
         )
     return ChatResponse(
+        request_id=request_id,
         provider=provider_key,
         reason_codes=reason_codes,
         content=None,

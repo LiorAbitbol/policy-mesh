@@ -77,7 +77,7 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
 
 ## POST /v1/chat (T-105)
 - **Request**: `POST /v1/chat` with JSON body `{ "messages": [ { "role": "user", "content": "..." } ], "model": null }`. `messages` is required (at least one); `model` is optional (provider default if omitted).
-- **Response**: `{ "provider": "local"|"openai", "reason_codes": ["..."], "content": "..." }` on success, or `"content": null, "error": "..."` on provider failure. Always includes `provider` and `reason_codes`.
+- **Response**: `{ "request_id": "...", "provider": "local"|"openai", "reason_codes": ["..."], "content": "..." }` on success, or `"content": null, "error": "..."` on provider failure. Always includes `request_id`, `provider`, and `reason_codes`. Also returns `X-Request-Id` header with the same value.
 - **Example**:
   ```bash
   curl -X POST http://127.0.0.1:8000/v1/chat \
@@ -85,6 +85,14 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
     -d '{"messages":[{"role":"user","content":"Hello"}]}'
   ```
 - Flow: decision → provider call → audit write → metrics → response. Integration tests: `pytest tests/integration/test_chat_flow.py -v`
+
+## GET /v1/audit/{request_id} (T-201)
+- Fetch the corresponding audit row (safe view; **no raw prompt**). Returns 404 when audit is disabled/unavailable or when the request_id is not found.
+- Example:
+  ```bash
+  curl http://127.0.0.1:8000/v1/audit/<request_id>
+  ```
+- Integration tests: `pytest tests/integration/test_audit_endpoint.py -v`
 
 ## GET /v1/metrics (T-106)
 - **Prometheus exposition**: `GET /v1/metrics` returns `chat_requests_total` (labels: provider, status) and `chat_request_latency_seconds` (label: provider). Content-Type: `text/plain; version=0.0.4; charset=utf-8`. Scrape with Prometheus or `curl http://127.0.0.1:8000/v1/metrics`. Integration tests: `pytest tests/integration/test_metrics.py -v`

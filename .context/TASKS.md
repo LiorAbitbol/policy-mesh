@@ -18,9 +18,9 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107` (Add integration tests with mocked providers)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201` (V2: request_id + audit fetch)
 - In Progress: none
-- Next: `T-201` (Add request_id to `/v1/chat` + GET audit by request_id)
+- Next: `T-202` (Add GET `/v1/routes` effective policy view)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -37,7 +37,7 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
 | 10 | T-105 | Add `/v1/chat` orchestration service | `done` | `planner` | `.context/private/tasks/T-105.md` |
 | 11 | T-106 | Add metrics middleware + `/v1/metrics` | `done` | `planner` | `.context/private/tasks/T-106.md` |
 | 12 | T-107 | Add integration tests with mocked providers | `done` | `planner` | `.context/private/tasks/T-107.md` |
-| 13 | T-201 | V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}` | `todo` | `planner` | `.context/private/tasks/T-201.md` |
+| 13 | T-201 | V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}` | `done` | `planner` | `.context/private/tasks/T-201.md` |
 | 14 | T-202 | V2: Add GET `/v1/routes` (effective policy view) | `todo` | `planner` | `.context/private/tasks/T-202.md` |
 | 15 | T-204 | V2: Easy-mode USD cost threshold routing | `todo` | `planner` | `.context/private/tasks/T-204.md` |
 | 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `todo` | `planner` | `.context/private/tasks/T-203.md` |
@@ -104,7 +104,7 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
   - Private Task Doc: `.context/private/tasks/T-107.md`
   - Acceptance: Tests verify route, fallback behavior, and audit write.
 - T-201: V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}`
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-201.md`
   - Acceptance: Chat returns request_id; audit event retrievable by id; tests updated.
