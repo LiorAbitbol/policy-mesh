@@ -64,6 +64,20 @@ flowchart LR
 - In scope: local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`). CLI and simple UI deferred.
 - Out of scope: RAG/vector DB, multi-tenant auth, additional providers, fancy UI, agent workflows.
 
+## V2 / M2 (Draft): Operator UX Slice
+The following items are planned for the next milestone (M2) and are tracked in `.context/TASKS.md`:
+
+- **T-201**: Add `request_id` to the `/v1/chat` response and add `GET /v1/audit/{request_id}` to fetch the corresponding audit event (safe fields only; no raw prompt).
+- **T-202**: Add `GET /v1/routes` that returns a safe view of the effective policy (rule order, cost threshold(s), sensitivity configuration summary, default provider).
+- **T-204**: Add “easy-mode” USD cost threshold routing using a chars→tokens heuristic and an env-configured OpenAI input price (no tokenization dependencies). When unset, fall back to the existing character-threshold behavior.
+- **T-203**: Add a minimal **static HTML/JS** UI (no Python in the frontend) served by FastAPI that can: chat (`/v1/chat`), show rules (`/v1/routes`), and fetch audit for the last request (`/v1/audit/{request_id}`).
+
+### V2 Interface Additions (Draft)
+- `/v1/chat` response includes `request_id` (and optionally `X-Request-Id` header).
+- New: `GET /v1/audit/{request_id}`
+- New: `GET /v1/routes`
+- New: UI served at `/` or `/ui` via mounted static files (implementation details tracked in T-203).
+
 ## Implementation Notes
 - Use `docs/STRUCTURE.md` for file and module placement.
 - Use `.context/TASKS.md` + `.context/private/tasks/` as execution source of truth.

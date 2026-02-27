@@ -241,6 +241,90 @@ Use the `prometheus_client` Python package for Prometheus-compatible counters an
 
 ---
 
+## DEC-012: V2 Traceability via request_id + audit fetch endpoint
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+For V2, `/v1/chat` responses include a `request_id` that can be used to fetch a single audit event via `GET /v1/audit/{request_id}`. The audit fetch response remains prompt-safe (no raw prompts).
+
+### Why
+- Enables operator traceability and supports the minimal UI audit panel without direct DB access.
+- Keeps audit privacy posture unchanged (hash/length/metadata only).
+
+### Alternatives Considered
+- Expose an audit “list/search” endpoint (broader surface area than needed for M2).
+- Require operators to query the database directly (bad UX and less portable).
+
+### Risks
+- Public schema change to `/v1/chat` response requires test and docs updates.
+- Audit-disabled environments must have clear behavior (e.g. 404 when unavailable).
+
+---
+
+## DEC-013: V2 effective policy introspection via `GET /v1/routes`
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Add `GET /v1/routes` returning a safe, effective-policy view (rule order and key thresholds) so operators and the UI can display “what rules are active” without reading env or code.
+
+### Why
+- Improves operability and transparency of routing decisions.
+- Creates a stable contract for the UI rules panel.
+
+### Alternatives Considered
+- No policy introspection endpoint (operators rely on env inspection/docs).
+- Return the entire raw config (risk of exposing secrets and unnecessary internals).
+
+### Risks
+- Must ensure no secrets are exposed (API keys, URLs with credentials, etc.).
+- Over time, the endpoint can accrete fields; keep it minimal and task-scoped.
+
+---
+
+## DEC-014: V2 minimal UI is static HTML/JS served by FastAPI
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+The V2 minimal UI will be a single-page static HTML/JS app (no Python frontend). FastAPI serves the files (e.g. via mounted static directory) and the UI calls the existing JSON APIs.
+
+### Why
+- Minimizes dependencies and avoids introducing a frontend build toolchain for M2.
+- Keeps deployment simple: UI ships with the API server.
+
+### Alternatives Considered
+- React/Vue + build pipeline (more complexity than required for M2).
+- Server-rendered templates (unnecessary; UI is API-driven).
+
+### Risks
+- UI will be intentionally minimal; avoid scope creep into “fancy UI”.
+- Static assets routing must not interfere with `/v1/*` API routes.
+
+---
+
+## DEC-015: V2 “easy-mode” USD cost threshold uses a heuristic estimate
+- Status: `accepted`
+- Date: 2026-02-26
+
+### Decision
+Introduce an optional USD-based cost gate for routing using a chars→tokens heuristic and an env-configured OpenAI input price (USD per 1K tokens). When USD config is not set, the system falls back to the existing character-threshold rule.
+
+### Why
+- Lets operators configure cost policy in intuitive units (USD) without adding tokenization dependencies.
+- Preserves determinism and avoids network/pricing lookups at runtime.
+
+### Alternatives Considered
+- Token-accurate accounting via tokenizer dependency (more complex; defer to V3).
+- Keep only character threshold (less intuitive for operators).
+
+### Risks
+- Estimate can be off by language/content; must be documented as approximate.
+- Requires occasional manual updates to configured OpenAI pricing values.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 

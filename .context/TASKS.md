@@ -1,7 +1,7 @@
 # Tasks
 
 ## Purpose
-Provide the executable public backlog for V1.
+Provide the executable public backlog for V1 and forward-looking V2 items.
 Each task links to a private canonical task document with full planning, coding, and testing updates.
 
 ## Status Model
@@ -13,11 +13,14 @@ Each task links to a private canonical task document with full planning, coding,
 ## Current Milestone
 M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metrics)
 
+## Next Milestone (Draft)
+M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
+
 ## Current Status Snapshot
 - Last Updated: 2026-02-26
 - Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107` (Add integration tests with mocked providers)
 - In Progress: none
-- Next: none (M1 complete)
+- Next: `T-201` (Add request_id to `/v1/chat` + GET audit by request_id)
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -34,6 +37,10 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
 | 10 | T-105 | Add `/v1/chat` orchestration service | `done` | `planner` | `.context/private/tasks/T-105.md` |
 | 11 | T-106 | Add metrics middleware + `/v1/metrics` | `done` | `planner` | `.context/private/tasks/T-106.md` |
 | 12 | T-107 | Add integration tests with mocked providers | `done` | `planner` | `.context/private/tasks/T-107.md` |
+| 13 | T-201 | V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}` | `todo` | `planner` | `.context/private/tasks/T-201.md` |
+| 14 | T-202 | V2: Add GET `/v1/routes` (effective policy view) | `todo` | `planner` | `.context/private/tasks/T-202.md` |
+| 15 | T-204 | V2: Easy-mode USD cost threshold routing | `todo` | `planner` | `.context/private/tasks/T-204.md` |
+| 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `todo` | `planner` | `.context/private/tasks/T-203.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -96,3 +103,24 @@ M1: Runnable vertical slice (`/v1/chat` -> decision -> provider -> audit -> metr
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-107.md`
   - Acceptance: Tests verify route, fallback behavior, and audit write.
+- T-201: V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}`
+  - Status: `todo`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-201.md`
+  - Acceptance: Chat returns request_id; audit event retrievable by id; tests updated.
+- T-202: V2: Add GET `/v1/routes` (effective policy view)
+  - Status: `todo`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-202.md`
+  - Acceptance: Endpoint returns safe, effective policy config; tests cover output.
+- T-203: V2: Minimal UI (chat + rules + audit)
+  - Status: `todo`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-203.md`
+  - Acceptance: Single page UI can chat, show rules, and fetch audit for last request.
+  - Note: UI is static HTML/JS (no Python in the frontend); FastAPI serves the files.
+- T-204: V2: Easy-mode USD cost threshold routing
+  - Status: `todo`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-204.md`
+  - Acceptance: Cost routing can use a configurable USD estimate (chars→tokens heuristic) with env-configured $/1k; falls back to character threshold when unset.
