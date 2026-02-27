@@ -19,7 +19,7 @@ Policy Mesh routes chat requests deterministically between local and cloud provi
 M1 (runnable vertical slice) is complete: `/v1/chat` → decision → provider → audit → metrics, with integration tests. Governance and task workflow live in `.context/`; application code is extended via task-based workflow.
 
 ## Interfaces (V1 / M1)
-Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/metrics`. Use the **HTTP API** (e.g. `curl` or any client) or the **OpenAPI interactive docs** at `/docs` when the app is running. No CLI or custom UI in this release.
+Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/audit/{request_id}`, `/v1/routes`, `/v1/metrics`. Use the **HTTP API** (e.g. `curl` or any client) or the **OpenAPI interactive docs** at `/docs` when the app is running. No CLI or custom UI in this release.
 
 ## Getting started
 
@@ -93,6 +93,14 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
   curl http://127.0.0.1:8000/v1/audit/<request_id>
   ```
 - Integration tests: `pytest tests/integration/test_audit_endpoint.py -v`
+
+## GET /v1/routes (T-202)
+- **Effective policy view**: `GET /v1/routes` returns the current routing policy (read-only). No API keys, env URLs, or secrets. Response includes: `rule_order` (e.g. `["sensitivity", "cost", "default"]`), `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `default_provider`. Uses `get_policy_config()` as single source of truth.
+- Example:
+  ```bash
+  curl http://127.0.0.1:8000/v1/routes
+  ```
+- Integration tests: `pytest tests/integration/test_routes_endpoint.py -v`
 
 ## GET /v1/metrics (T-106)
 - **Prometheus exposition**: `GET /v1/metrics` returns `chat_requests_total` (labels: provider, status) and `chat_request_latency_seconds` (label: provider). Content-Type: `text/plain; version=0.0.4; charset=utf-8`. Scrape with Prometheus or `curl http://127.0.0.1:8000/v1/metrics`. Integration tests: `pytest tests/integration/test_metrics.py -v`
