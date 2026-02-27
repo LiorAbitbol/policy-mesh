@@ -108,6 +108,9 @@ jobs:
       - name: Build app image
         run: docker build -t policy-mesh-app .
 
+      - name: Provide .env for compose (CI has no secrets)
+        run: cp .env.example .env
+
       - name: Start app service
         run: docker compose up -d app
 
