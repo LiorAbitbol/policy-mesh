@@ -23,6 +23,7 @@
 
   <section id="chat-section">
     <h2>Chat</h2>
+    <p class="muted" style="margin: 0 0 0.5rem 0;">Responses may take 10–60 seconds; the app waits for the full reply from the provider.</p>
     <textarea id="chat-input" placeholder="Type a message..."></textarea>
     <br>
     <button id="chat-submit">Send</button>
@@ -61,7 +62,16 @@
             model: null
           })
         })
-          .then(function (r) { return r.json(); })
+          .then(function (r) {
+            if (!r.ok) {
+              return r.text().then(function (body) {
+                var err = new Error(r.status + ' ' + r.statusText + (body ? ': ' + body.slice(0, 200) : ''));
+                err.response = r;
+                throw err;
+              });
+            }
+            return r.json();
+          })
           .then(function (data) {
             lastRequestId = data.request_id || null;
             var lines = [
