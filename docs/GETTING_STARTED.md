@@ -105,12 +105,12 @@ cp .env.example .env
 
 Edit `.env` and set at least:
 
-- **For audit:**  
-  `DATABASE_URL=postgresql+psycopg://policy_mesh:change-me@postgres:5432/policy_mesh`  
+- **For audit:**
+  `DATABASE_URL=postgresql+psycopg://policy_mesh:change-me@postgres:5432/policy_mesh`
   (Use host `postgres` when the app runs in Docker.)
 
-- **Optional – OpenAI:**  
-  `OPENAI_API_KEY=sk-your-key`  
+- **Optional – OpenAI:**
+  `OPENAI_API_KEY=sk-your-key`
   (Only needed if you want requests to go to OpenAI; otherwise use local routing with Ollama.)
 
 **5b. Add env to the app container (local run)**
@@ -174,17 +174,17 @@ To force local (Ollama) routing, set `DEFAULT_PROVIDER=local` in `.env` (and ens
 
 ## Troubleshooting
 
-- **Tests fail with `ModuleNotFoundError`**  
+- **Tests fail with `ModuleNotFoundError`**
   Ensure the venv is activated and you ran `pip install -e ".[dev]"` from the repo root.
 
-- **App fails on startup with "No module named 'app.audit.repository'"**  
+- **App fails on startup with "No module named 'app.audit.repository'"**
   The app imports the audit layer at startup. If you run without `DATABASE_URL`, audit is disabled but the module must still load; ensure `sqlalchemy` and `psycopg[binary]` are installed (they are in the default deps).
 
-- **`/v1/chat` returns 500 or "connection refused"**  
+- **`/v1/chat` returns 500 or "connection refused"**
   The chosen provider (Ollama or OpenAI) must be reachable and configured. For Ollama in Docker, use `OLLAMA_BASE_URL=http://ollama:11434` in the app container. For OpenAI, set `OPENAI_API_KEY`.
 
-- **Audit not writing rows**  
+- **Audit not writing rows**
   Set `DATABASE_URL` and run migrations. If the app runs in Docker, use host `postgres` in `DATABASE_URL` and ensure the app service has that variable (e.g. via `env_file: .env`).
 
-- **Docker Compose fails with "env file .env not found"**  
+- **Docker Compose fails with "env file .env not found"**
   The default `docker-compose.yml` does not require `.env`. If you added `env_file: .env`, create the file with `cp .env.example .env`.

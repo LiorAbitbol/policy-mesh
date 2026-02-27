@@ -25,15 +25,15 @@ Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/metrics`. Use the **HTTP A
 
 **Prerequisites:** Git, **Python 3.11+** (required). Optional: **Docker & Docker Compose** (for Postgres/Ollama/app), **OpenAI API key** (for cloud provider), **Ollama** (for local LLM).
 
-1. **Clone and install:**  
-   `git clone https://github.com/LiorAbitbol/policy-mesh.git && cd policy-mesh`  
-   `python3 -m venv .venv && source .venv/bin/activate`  
+1. **Clone and install:**
+   `git clone https://github.com/LiorAbitbol/policy-mesh.git && cd policy-mesh`
+   `python3 -m venv .venv && source .venv/bin/activate`
    `pip install -e ".[dev]"`
 
-2. **Run tests (no Docker or keys):**  
+2. **Run tests (no Docker or keys):**
    `pytest tests/ -v`
 
-3. **Run the app:**  
+3. **Run the app:**
    `uvicorn app.main:app --reload` → then open http://127.0.0.1:8000/docs
 
 For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)**.
