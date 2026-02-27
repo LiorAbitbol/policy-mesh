@@ -20,10 +20,10 @@ flowchart LR
 ```
 
 ## Core Components
-- `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/routes`, `/v1/metrics`.
+- `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/metrics` (`/v1/routes` deferred).
 - `DecisionEngine`: Produces deterministic routing decisions and explicit reason codes.
 - `Providers`: Shared provider interface with `ollama` and `openai` adapters only in V1.
-- `Audit`: Persists one audit event per chat request.
+- `Audit`: Persists one audit event per chat request in Postgres (prompt hash and metadata only).
 - `Telemetry`: Structured JSON logs and Prometheus-compatible metrics.
 
 ## Request Lifecycle (`/v1/chat`)
@@ -61,7 +61,7 @@ flowchart LR
 - No real network calls in tests.
 
 ## V1 Boundaries
-- In scope: local/openai routing, audit persistence, metrics, simple CLI and simple UI.
+- In scope: local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`). CLI and simple UI deferred.
 - Out of scope: RAG/vector DB, multi-tenant auth, additional providers, fancy UI, agent workflows.
 
 ## Implementation Notes

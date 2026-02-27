@@ -19,8 +19,11 @@ Ship a deterministic router that selects between local (Ollama) and cloud (OpenA
 ## Key Modules
 - DecisionEngine
 - Providers (Ollama/OpenAI)
-- Audit logging
+- Audit persistence (Postgres; prompt hash and metadata only)
 - Telemetry (structured logs + metrics)
+
+## Interfaces (V1)
+- HTTP API and OpenAPI interactive docs at `/docs`. No CLI or custom UI in M1.
 
 ## What Good Looks Like (V1)
 - Deterministic routing behavior

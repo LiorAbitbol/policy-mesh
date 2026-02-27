@@ -8,15 +8,35 @@ Policy Mesh routes chat requests deterministically between local and cloud provi
 ## V1 Goals
 - Deterministic routing between `ollama` (local) and `openai` (cloud).
 - Explicit reason codes for every routing decision.
-- Audit event persistence for every chat request.
+- Audit event persistence in Postgres for every chat request.
 - Prometheus-compatible metrics and structured logs.
-- Simple CLI and simple UI.
+- HTTP API with OpenAPI interactive docs (`/docs`); CLI and simple UI not in M1.
 
 ## Data Persistence (V1)
-- Audit event persistence targets Postgres.
+- Audit events are persisted in Postgres (one row per request; prompt hash and metadata only, no raw prompts).
 
 ## Current Status
 M1 (runnable vertical slice) is complete: `/v1/chat` → decision → provider → audit → metrics, with integration tests. Governance and task workflow live in `.context/`; application code is extended via task-based workflow.
+
+## Interfaces (V1 / M1)
+Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/metrics`. Use the **HTTP API** (e.g. `curl` or any client) or the **OpenAPI interactive docs** at `/docs` when the app is running. No CLI or custom UI in this release.
+
+## Getting started
+
+**Prerequisites:** Git, **Python 3.11+** (required). Optional: **Docker & Docker Compose** (for Postgres/Ollama/app), **OpenAI API key** (for cloud provider), **Ollama** (for local LLM).
+
+1. **Clone and install:**  
+   `git clone https://github.com/LiorAbitbol/policy-mesh.git && cd policy-mesh`  
+   `python3 -m venv .venv && source .venv/bin/activate`  
+   `pip install -e ".[dev]"`
+
+2. **Run tests (no Docker or keys):**  
+   `pytest tests/ -v`
+
+3. **Run the app:**  
+   `uvicorn app.main:app --reload` → then open http://127.0.0.1:8000/docs
+
+For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)**.
 
 ## Local Run/Test (T-101)
 - Create venv: `python3 -m venv .venv`
@@ -70,6 +90,7 @@ M1 (runnable vertical slice) is complete: `/v1/chat` → decision → provider �
 - **Prometheus exposition**: `GET /v1/metrics` returns `chat_requests_total` (labels: provider, status) and `chat_request_latency_seconds` (label: provider). Content-Type: `text/plain; version=0.0.4; charset=utf-8`. Scrape with Prometheus or `curl http://127.0.0.1:8000/v1/metrics`. Integration tests: `pytest tests/integration/test_metrics.py -v`
 
 ## Documentation Map
+- **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** - Prerequisites and step-by-step: clone, run tests, run app (local or Docker).
 - `docs/STRUCTURE.md` - Annotated project tree and placement conventions.
 - `docs/ARCHITECTURE.md` - V1 architecture, request lifecycle, boundaries.
 - `docs/DECISIONS.md` - Decision log and dependency decision template.
