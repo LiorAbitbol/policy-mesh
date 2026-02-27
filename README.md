@@ -2,6 +2,10 @@
 
 A local-first AI gateway that routes chat requests between local and cloud providers based on configurable policy, with audit, metrics, and a minimal UI.
 
+## Tech stack
+
+**Python 3.11+**, **FastAPI**, **PostgreSQL**, **Ollama** (local LLM), **OpenAI** (cloud). Run with **Docker Compose** or on the host. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full stack and request flow.
+
 ## What it does
 
 - **Routes** each request deterministically: sensitivity (keywords) → cost (length or USD threshold) → default provider.
@@ -40,6 +44,11 @@ OpenAPI docs at `/docs` when the app is running. Config is via environment varia
 | Doc | Contents |
 |-----|----------|
 | **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** | Prerequisites, Docker flow, migrations, verification, troubleshooting |
+| **[docs/ENGINE_RULES.md](docs/ENGINE_RULES.md)** | Routing policy: rule order, env variables, and how they affect behavior |
+| **[docs/API_USAGE.md](docs/API_USAGE.md)** | Request/response contract, curl examples, integration snippet |
+| **[docs/CONFIGURATION_SCENARIOS.md](docs/CONFIGURATION_SCENARIOS.md)** | Common setups: OpenAI default + sensitive local, local only, USD cost, audit off |
+| **[docs/METRICS.md](docs/METRICS.md)** | Prometheus metrics, labels, scrape config, example queries |
+| **[docs/PRIVACY.md](docs/PRIVACY.md)** | What we store (audit), what is sent to providers, controlling data flow |
 | [.env.example](.env.example) | All env vars with short descriptions |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, request lifecycle, boundaries |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | Decision log and dependency choices |
