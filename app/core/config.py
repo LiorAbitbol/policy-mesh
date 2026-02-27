@@ -67,7 +67,18 @@ def get_policy_config() -> PolicyConfig:
             return None
         return value if value > 0.0 else None
 
-    cost_max_usd_for_local = _parse_positive_float("COST_MAX_USD_FOR_LOCAL")
+    # COST_MAX_USD_FOR_LOCAL: allow 0 (meaning "never prefer local by USD"); otherwise must be positive.
+    def _parse_cost_max_usd(env_var: str) -> float | None:
+        raw = os.getenv(env_var, "").strip()
+        if not raw:
+            return None
+        try:
+            value = float(raw)
+        except ValueError:
+            return None
+        return value if value >= 0.0 else None
+
+    cost_max_usd_for_local = _parse_cost_max_usd("COST_MAX_USD_FOR_LOCAL")
     openai_input_usd_per_1k_tokens = _parse_positive_float(
         "OPENAI_INPUT_USD_PER_1K_TOKENS"
     )
