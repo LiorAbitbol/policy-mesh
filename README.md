@@ -19,7 +19,7 @@ Policy Mesh routes chat requests deterministically between local and cloud provi
 M1 (runnable vertical slice) is complete: `/v1/chat` → decision → provider → audit → metrics, with integration tests. Governance and task workflow live in `.context/`; application code is extended via task-based workflow.
 
 ## Interfaces (V1 / M1)
-Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/audit/{request_id}`, `/v1/routes`, `/v1/metrics`. Use the **HTTP API** (e.g. `curl` or any client) or the **OpenAPI interactive docs** at `/docs` when the app is running. No CLI or custom UI in this release.
+Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/audit/{request_id}`, `/v1/routes`, `/v1/metrics`. Use the **HTTP API** (e.g. `curl` or any client) or the **OpenAPI interactive docs** at `/docs` when the app is running. A **minimal static UI** (T-203) is served at **`/`** or **`/ui`**: chat, routing rules (from GET `/v1/routes`), and audit for the last request (GET `/v1/audit/{request_id}`). The UI depends on T-201 and T-202 (and T-204 for cost policy fields). No CLI in this release.
 
 ## Getting started
 
@@ -34,7 +34,7 @@ Implemented endpoints: `/v1/health`, `/v1/chat`, `/v1/audit/{request_id}`, `/v1/
    `pytest tests/ -v`
 
 3. **Run the app:**
-   `uvicorn app.main:app --reload` → then open http://127.0.0.1:8000/docs
+   `uvicorn app.main:app --reload` → then open http://127.0.0.1:8000/ (minimal UI) or http://127.0.0.1:8000/docs (OpenAPI)
 
 For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)**.
 
@@ -115,6 +115,9 @@ For full step-by-step instructions (Postgres, Ollama, Docker, env vars), see **[
   curl http://127.0.0.1:8000/v1/routes
   ```
 - Integration tests: `pytest tests/integration/test_routes_endpoint.py -v`
+
+## Minimal UI (T-203)
+- Single-page static UI at **`/`** or **`/ui`**: chat (POST `/v1/chat`), routing rules (GET `/v1/routes`), and audit for the last request (GET `/v1/audit/{request_id}`). No build step; vanilla HTML/JS served by FastAPI. Depends on T-201 and T-202 (and T-204 for cost policy fields in the rules panel).
 
 ## GET /v1/metrics (T-106)
 - **Prometheus exposition**: `GET /v1/metrics` returns `chat_requests_total` (labels: provider, status) and `chat_request_latency_seconds` (label: provider). Content-Type: `text/plain; version=0.0.4; charset=utf-8`. Scrape with Prometheus or `curl http://127.0.0.1:8000/v1/metrics`. Integration tests: `pytest tests/integration/test_metrics.py -v`

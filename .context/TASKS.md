@@ -18,9 +18,9 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
 
 ## Current Status Snapshot
 - Last Updated: 2026-02-27
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201` (V2: request_id + audit fetch), `T-202` (V2: GET `/v1/routes` effective policy view), `T-204` (V2: Easy-mode USD cost threshold routing)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201` (V2: request_id + audit fetch), `T-202` (V2: GET `/v1/routes` effective policy view), `T-204` (V2: Easy-mode USD cost threshold routing), `T-203` (V2: Minimal UI chat + rules + audit)
 - In Progress: none
-- Next: `T-203` (Minimal UI: chat + rules + audit)
+- Next: —
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -40,7 +40,7 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
 | 13 | T-201 | V2: Add request_id to `/v1/chat` + GET `/v1/audit/{request_id}` | `done` | `planner` | `.context/private/tasks/T-201.md` |
 | 14 | T-202 | V2: Add GET `/v1/routes` (effective policy view) | `done` | `planner` | `.context/private/tasks/T-202.md` |
 | 15 | T-204 | V2: Easy-mode USD cost threshold routing | `done` | `planner` | `.context/private/tasks/T-204.md` |
-| 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `todo` | `planner` | `.context/private/tasks/T-203.md` |
+| 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `done` | `planner` | `.context/private/tasks/T-203.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -114,7 +114,7 @@ M2: Operator UX slice (minimal UI + show rules + fetch audit for a request)
   - Private Task Doc: `.context/private/tasks/T-202.md`
   - Acceptance: Endpoint returns safe, effective policy config; tests cover output.
 - T-203: V2: Minimal UI (chat + rules + audit)
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-203.md`
   - Acceptance: Single page UI can chat, show rules, and fetch audit for last request.

@@ -36,6 +36,8 @@ policy-mesh/
 │   │   ├── models.py                # AuditEvent model(s)
 │   │   ├── repository.py            # Audit persistence adapter
 │   │   └── service.py               # Audit write orchestration helpers
+│   ├── static/                      # Minimal UI (T-203): single-page static HTML/JS
+│   │   └── index.html               # Chat, rules (GET /v1/routes), audit (GET /v1/audit/{id})
 │   └── services/                    # Application orchestration services
 │       └── chat_orchestrator.py     # /v1/chat flow: decision -> provider -> audit -> metrics
 ├── tests/                           # Automated tests (no real network calls)

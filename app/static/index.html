@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Policy Mesh</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 1rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    h2 { font-size: 1rem; margin: 1rem 0 0.5rem; color: #333; }
+    section { margin-bottom: 1.5rem; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; }
+    input, textarea, button { font-size: 1rem; }
+    textarea { width: 100%; min-height: 60px; box-sizing: border-box; }
+    button { padding: 0.4rem 0.75rem; cursor: pointer; margin-right: 0.5rem; margin-top: 0.5rem; }
+    .output { white-space: pre-wrap; word-break: break-word; margin-top: 0.5rem; padding: 0.5rem; background: #f5f5f5; border-radius: 4px; font-size: 0.9rem; }
+    .error { background: #fdd; }
+    .muted { color: #666; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>Policy Mesh</h1>
+  <p class="muted">Chat, view routing rules, and audit for the last request.</p>
+
+  <section id="chat-section">
+    <h2>Chat</h2>
+    <textarea id="chat-input" placeholder="Type a message..."></textarea>
+    <br>
+    <button id="chat-submit">Send</button>
+    <div id="chat-output" class="output" style="display:none;"></div>
+  </section>
+
+  <section id="rules-section">
+    <h2>Routing rules</h2>
+    <button id="rules-load">Load rules</button>
+    <div id="rules-output" class="output" style="display:none;"></div>
+  </section>
+
+  <section id="audit-section">
+    <h2>Audit (last request)</h2>
+    <div id="audit-output" class="output muted">Send a chat to fetch audit for that request.</div>
+  </section>
+
+  <script>
+    (function () {
+      var lastRequestId = null;
+
+      function chatSubmit() {
+        var input = document.getElementById('chat-input');
+        var output = document.getElementById('chat-output');
+        var text = (input.value || '').trim();
+        if (!text) return;
+        output.style.display = 'block';
+        output.className = 'output';
+        output.textContent = 'Sending…';
+
+        fetch('/v1/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: text }],
+            model: null
+          })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (data) {
+            lastRequestId = data.request_id || null;
+            var lines = [
+              'provider: ' + (data.provider || '—'),
+              'reason_codes: ' + (data.reason_codes ? data.reason_codes.join(', ') : '—')
+            ];
+            if (data.error) {
+              lines.push('error: ' + data.error);
+              output.className = 'output error';
+            } else {
+              lines.push('content: ' + (data.content != null ? data.content : '—'));
+            }
+            output.textContent = lines.join('\n');
+            if (lastRequestId) fetchAudit(lastRequestId);
+          })
+          .catch(function (err) {
+            output.className = 'output error';
+            output.textContent = 'error: ' + (err.message || String(err));
+          });
+      }
+
+      function loadRules() {
+        var output = document.getElementById('rules-output');
+        output.style.display = 'block';
+        output.textContent = 'Loading…';
+
+        fetch('/v1/routes')
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+            return r.json();
+          })
+          .then(function (data) {
+            var parts = [];
+            parts.push('rule_order: ' + (data.rule_order ? data.rule_order.join(' → ') : '—'));
+            parts.push('sensitivity_keyword_count: ' + (data.sensitivity_keyword_count != null ? data.sensitivity_keyword_count : '—'));
+            parts.push('cost_max_prompt_length_for_local: ' + (data.cost_max_prompt_length_for_local != null ? data.cost_max_prompt_length_for_local : '—'));
+            parts.push('usd_cost_mode_active: ' + (data.usd_cost_mode_active != null ? data.usd_cost_mode_active : '—'));
+            if (data.usd_cost_mode_active) {
+              parts.push('cost_max_usd_for_local: ' + (data.cost_max_usd_for_local != null ? data.cost_max_usd_for_local : '—'));
+              parts.push('openai_input_usd_per_1k_tokens: ' + (data.openai_input_usd_per_1k_tokens != null ? data.openai_input_usd_per_1k_tokens : '—'));
+              parts.push('cost_chars_per_token: ' + (data.cost_chars_per_token != null ? data.cost_chars_per_token : '—'));
+            }
+            parts.push('default_provider: ' + (data.default_provider || '—'));
+            output.className = 'output';
+            output.textContent = parts.join('\n');
+          })
+          .catch(function (err) {
+            output.className = 'output error';
+            output.textContent = 'error: ' + (err.message || String(err));
+          });
+      }
+
+      function fetchAudit(requestId) {
+        if (!requestId) return;
+        var output = document.getElementById('audit-output');
+        output.className = 'output';
+        output.textContent = 'Loading audit…';
+
+        fetch('/v1/audit/' + encodeURIComponent(requestId))
+          .then(function (r) {
+            if (r.status === 404) {
+              output.textContent = 'Audit not found or disabled for this request.';
+              output.className = 'output muted';
+              return null;
+            }
+            if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+            return r.json();
+          })
+          .then(function (data) {
+            if (!data) return;
+            var parts = [];
+            parts.push('request_id: ' + (data.request_id || '—'));
+            parts.push('decision: ' + (data.decision || '—'));
+            parts.push('status: ' + (data.status || '—'));
+            parts.push('latency_ms: ' + (data.latency_ms != null ? data.latency_ms : '—'));
+            parts.push('failure_category: ' + (data.failure_category != null ? data.failure_category : '—'));
+            parts.push('prompt_hash: ' + (data.prompt_hash != null ? data.prompt_hash : '—'));
+            parts.push('prompt_length: ' + (data.prompt_length != null ? data.prompt_length : '—'));
+            parts.push('created_at: ' + (data.created_at != null ? data.created_at : '—'));
+            output.textContent = parts.join('\n');
+          })
+          .catch(function (err) {
+            output.className = 'output error';
+            output.textContent = 'error: ' + (err.message || String(err));
+          });
+      }
+
+      document.getElementById('chat-submit').addEventListener('click', chatSubmit);
+      document.getElementById('rules-load').addEventListener('click', loadRules);
+    })();
+  </script>
+</body>
+</html>
