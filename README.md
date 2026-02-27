@@ -49,10 +49,10 @@ OpenAPI docs at `/docs` when the app is running. Config is via environment varia
 | **[docs/CONFIGURATION_SCENARIOS.md](docs/CONFIGURATION_SCENARIOS.md)** | Common setups: OpenAI default + sensitive local, local only, USD cost, audit off |
 | **[docs/METRICS.md](docs/METRICS.md)** | Prometheus metrics, labels, scrape config, example queries |
 | **[docs/PRIVACY.md](docs/PRIVACY.md)** | What we store (audit), what is sent to providers, controlling data flow |
-| [.env.example](.env.example) | All env vars with short descriptions |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, request lifecycle, boundaries |
-| [docs/DECISIONS.md](docs/DECISIONS.md) | Decision log and dependency choices |
-| [.context/](.context/) | Task backlog, scope, and workflow (see [.context/README.md](.context/README.md)) |
+| **[.env.example](.env.example)** | All env vars with short descriptions |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | System design, request lifecycle, boundaries |
+| **[docs/DECISIONS.md](docs/DECISIONS.md)** | Decision log and dependency choices |
+| **[.context/](.context/)** | Task backlog, scope, and workflow (see [.context/README.md](.context/README.md)) |
 
 ## Development
 
