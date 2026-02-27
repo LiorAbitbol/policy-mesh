@@ -6,6 +6,24 @@ Define the technical architecture for V1 so humans and AI agents can implement c
 ## System Goal
 Build a local-first AI gateway that routes requests deterministically between local and cloud providers, records auditable outcomes, and exposes baseline metrics.
 
+## Technology stack
+
+| Layer | Technology | Role |
+|-------|------------|------|
+| **Runtime** | Python 3.11+ | Application and tests |
+| **Web framework** | FastAPI | API, OpenAPI docs, static file serving |
+| **ASGI server** | Uvicorn | Serves the FastAPI app (in process or container) |
+| **Database** | PostgreSQL 16 | Audit event persistence |
+| **ORM / migrations** | SQLAlchemy, Alembic | Schema and migrations |
+| **DB driver** | psycopg (async) | Postgres connectivity |
+| **HTTP client** | httpx | Calls to Ollama and OpenAI APIs |
+| **Metrics** | prometheus_client | Counters and histograms at `/v1/metrics` |
+| **Local LLM** | Ollama | Optional; runs as a container or on host |
+| **Cloud LLM** | OpenAI API | Optional; requires API key |
+| **Containers** | Docker, Docker Compose | Postgres, app, and optionally Ollama; see [GETTING_STARTED](GETTING_STARTED.md) |
+
+The app can run **in Docker** (recommended: `docker compose up`) or **on the host** (Postgres elsewhere, `uvicorn app.main:app`). Config is via environment variables (see [.env.example](../.env.example)).
+
 ## High-Level Flow
 
 ```mermaid
@@ -20,11 +38,12 @@ flowchart LR
 ```
 
 ## Core Components
-- `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/metrics` (`/v1/routes` deferred).
+- `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/metrics`, `/v1/routes`, `/v1/audit/{request_id}`.
 - `DecisionEngine`: Produces deterministic routing decisions and explicit reason codes.
-- `Providers`: Shared provider interface with `ollama` and `openai` adapters only in V1.
+- `Providers`: Shared provider interface with `ollama` and `openai` adapters.
 - `Audit`: Persists one audit event per chat request in Postgres (prompt hash and metadata only).
 - `Telemetry`: Structured JSON logs and Prometheus-compatible metrics.
+- `UI`: Minimal static HTML/JS at `/` and `/ui` (chat, rules, audit).
 
 ## Request Lifecycle (`/v1/chat`)
 1. API receives validated request schema.
@@ -60,23 +79,18 @@ flowchart LR
 - Request flow: integration tests for route behavior, fallback behavior, and audit writes.
 - No real network calls in tests.
 
-## V1 Boundaries
-- In scope: local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`). CLI and simple UI deferred.
-- Out of scope: RAG/vector DB, multi-tenant auth, additional providers, fancy UI, agent workflows.
+## Boundaries
+- **In scope:** local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`), `/v1/routes`, `/v1/audit/{request_id}`, minimal static UI at `/` and `/ui`. See `.context/SCOPE.md` for the canonical scope list.
+- **Out of scope:** RAG/vector DB, multi-tenant auth, additional providers, fancy UI, agent workflows.
 
-## V2 / M2 (Draft): Operator UX Slice
-The following items are planned for the next milestone (M2) and are tracked in `.context/TASKS.md`:
+M1 (vertical slice) and M2 (operator UX: request_id, audit fetch, `/v1/routes`, USD cost rule, minimal UI) are implemented. Current interfaces:
 
-- **T-201**: Add `request_id` to the `/v1/chat` response and add `GET /v1/audit/{request_id}` to fetch the corresponding audit event (safe fields only; no raw prompt).
-- **T-202**: Add `GET /v1/routes` that returns a safe view of the effective policy (rule order, cost threshold(s), sensitivity configuration summary, default provider).
-- **T-204**: Add “easy-mode” USD cost threshold routing using a chars→tokens heuristic and an env-configured OpenAI input price (no tokenization dependencies). When unset, fall back to the existing character-threshold behavior.
-- **T-203**: Add a minimal **static HTML/JS** UI (no Python in the frontend) served by FastAPI that can: chat (`/v1/chat`), show rules (`/v1/routes`), and fetch audit for the last request (`/v1/audit/{request_id}`).
+## M2 Interfaces (Implemented)
 
-### V2 Interface Additions (Draft)
-- `/v1/chat` response includes `request_id` (and optionally `X-Request-Id` header).
-- New: `GET /v1/audit/{request_id}`
-- New: `GET /v1/routes`
-- New: UI served at `/` or `/ui` via mounted static files (implementation details tracked in T-203).
+- `/v1/chat` returns `request_id` and sets `X-Request-Id` header.
+- `GET /v1/audit/{request_id}` returns the audit event (safe fields only).
+- `GET /v1/routes` returns the effective policy (no secrets).
+- UI at `/` and `/ui` (static HTML/JS) for chat, rules, and audit.
 
 ## Implementation Notes
 - Use `docs/STRUCTURE.md` for file and module placement.
