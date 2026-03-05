@@ -20,9 +20,9 @@ Build a local-first AI gateway that routes requests deterministically between lo
 | **Metrics** | prometheus_client | Counters and histograms at `/v1/metrics` |
 | **Local LLM** | Ollama | Optional; runs as a container or on host |
 | **Cloud LLM** | OpenAI, Anthropic APIs | Optional; requires PUBLIC_LLM_API_KEY; provider inferred from PUBLIC_LLM_URL |
-| **Containers** | Docker, Docker Compose | Postgres, app, and optionally Ollama; see [GETTING_STARTED](GETTING_STARTED.md) |
+| **Containers** | Docker, Docker Compose | Postgres, app, and optionally Ollama; see [getting_started](getting_started.md) |
 
-The app can run **in Docker** (recommended: `docker compose up`) or **on the host** (Postgres elsewhere, `uvicorn app.main:app`). Config is via environment variables and a required policy file (POLICY_FILE); see [.env.example](../.env.example) and [Policy file schema](POLICY_FILE_SCHEMA.md).
+The app can run **in Docker** (recommended: `docker compose up`) or **on the host** (Postgres elsewhere, `uvicorn app.main:app`). Config is via environment variables and a required policy file (POLICY_FILE); see [.env.example](../.env.example) and [Policy file schema](policy_file_schema.md).
 
 ## High-Level Flow
 
@@ -71,7 +71,7 @@ flowchart TB
   Resolve --> Anthropic[anthropic]
 ```
 
-Policy (sensitivity keywords, cost thresholds, default provider) is loaded from the JSON file at **POLICY_FILE** only. See [Engine rules](ENGINE_RULES.md) and [Policy file schema](POLICY_FILE_SCHEMA.md).
+Policy (sensitivity keywords, cost thresholds, default provider) is loaded from the JSON file at **POLICY_FILE** only. See [Engine rules](engine_rules.md) and [Policy file schema](policy_file_schema.md).
 
 ## Core Components
 - `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/metrics`, `/v1/routes`, `/v1/audit/{request_id}`.
@@ -107,7 +107,7 @@ Policy (sensitivity keywords, cost thresholds, default provider) is loaded from 
 - Any public schema change requires:
   - test updates,
   - `README.md` updates,
-  - this document (`docs/ARCHITECTURE.md`) updates.
+  - this document (`docs/architecture.md`) updates.
 
 ## Testing Strategy (V1)
 - Decision logic: unit tests for sensitive/cost/default branches and determinism.
@@ -116,7 +116,7 @@ Policy (sensitivity keywords, cost thresholds, default provider) is loaded from 
 - No real network calls in tests.
 
 ## Boundaries
-- **In scope:** local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`), `/v1/routes`, `/v1/audit/{request_id}`, minimal static UI at `/` and `/ui`. See `.context/SCOPE.md` for the canonical scope list.
+- **In scope:** local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`), `/v1/routes`, `/v1/audit/{request_id}`, minimal static UI at `/` and `/ui`. See `.context/scope.md` for the canonical scope list.
 - **Out of scope:** RAG/vector DB, multi-tenant auth, additional providers beyond local + OpenAI + Anthropic, fancy UI, agent workflows.
 
 M1 (vertical slice) and M2 (operator UX: request_id, audit fetch, `/v1/routes`, USD cost rule, minimal UI) are implemented. Current interfaces:
@@ -129,5 +129,5 @@ M1 (vertical slice) and M2 (operator UX: request_id, audit fetch, `/v1/routes`, 
 - UI at `/` and `/ui` (static HTML/JS) for chat, rules, and audit.
 
 ## Implementation Notes
-- Use `docs/STRUCTURE.md` for file and module placement.
-- Use `.context/TASKS.md` + `.context/private/tasks/` as execution source of truth.
+- Use `docs/structure.md` for file and module placement.
+- Use `.context/tasks.md` + `.context/private/tasks/` as execution source of truth.

@@ -4,8 +4,8 @@
 Define the canonical role model and workflow for AI-assisted development sessions in this repository.
 
 ## Authority
-- `.context/AGENTS.md` is the canonical tracked source of truth for role boundaries and workflow.
-- `.context/private/AGENTS.md` may include supplemental local/operator notes only.
+- `.context/agents.md` is the canonical tracked source of truth for role boundaries and workflow.
+- `.context/private/agents.md` may include supplemental local/operator notes only.
 - Private notes must not override or conflict with this document.
 
 ## Role Definitions
@@ -21,12 +21,12 @@ The three roles below are fulfilled by AI agents (any compatible model or tool).
 - Update architecture/process documentation when necessary.
 
 **May modify**
-- `.context/TASKS.md`
-- `.context/SCOPE.md`
-- `.context/RULES.md`
-- `.context/AGENTS.md`
-- `docs/DECISIONS.md`
-- `docs/ARCHITECTURE.md`
+- `.context/tasks.md`
+- `.context/scope.md`
+- `.context/rules.md`
+- `.context/agents.md`
+- `docs/decisions.md`
+- `docs/architecture.md`
 
 **Must NOT**
 - Modify production code (`app/**`)
@@ -138,7 +138,7 @@ Do not reuse one session for multiple roles in the same task.
 Each role session must consume the prior role's handoff from `.context/private/tasks/T-XXXX.md` and append its own update block.
 
 ## Handoff to Planner (automated via task doc)
-**Default (automated):** Coder and Tester **must** write their output into the task doc (Coding Update / Testing Update blocks and, for Tester, Final Disposition). The user then only says e.g. **"Coder done for T-112"** or **"Tester done for T-112"** or **"Both done for T-112"**. The Planner reads `.context/private/tasks/T-XXXX.md`, records any missing details if needed, updates `.context/TASKS.md`, and completes the workflow (e.g. git commit). No paste required.
+**Default (automated):** Coder and Tester **must** write their output into the task doc (Coding Update / Testing Update blocks and, for Tester, Final Disposition). The user then only says e.g. **"Coder done for T-112"** or **"Tester done for T-112"** or **"Both done for T-112"**. The Planner reads `.context/private/tasks/T-XXXX.md`, records any missing details if needed, updates `.context/tasks.md`, and completes the workflow (e.g. git commit). No paste required.
 
 **Fallback:** If the task doc could not be updated (e.g. Coder/Tester ran in an environment without write access to `.context/private/`), paste the agent’s output (assumptions, notes, files changed, run commands) into the Planner session. The Planner will record it in the task doc and proceed.
 

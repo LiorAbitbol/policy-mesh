@@ -4,12 +4,12 @@
 Define the non-negotiable engineering guardrails for V1 execution. This is the canonical, tracked rules document for humans and AI agents.
 
 ## Authority
-- `.context/RULES.md` is the canonical source of truth.
-- `.context/private/RULES.md` may contain supplemental local/operator notes only.
+- `.context/rules.md` is the canonical source of truth.
+- `.context/private/rules.md` may contain supplemental local/operator notes only.
 - Private notes must not override or conflict with this document.
 
 ## 1) Scope Discipline
-- Only tasks listed in `.context/TASKS.md` may be implemented.
+- Only tasks listed in `.context/tasks.md` may be implemented.
 - One task at a time: one task = one PR-sized, reviewable change.
 - No scope creep beyond V1.
 - Explicitly out of scope for V1:
@@ -31,6 +31,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - Every feature must have a commit.
 - Use conventional commit prefixes and include task ID (example: `feat(router): add sensitivity rule (T-102)`).
 - No WIP commits on `main`.
+- **Documentation file names:** New documentation files must use **lowercase** filenames (e.g. `getting_started.md`, `api_usage.md`). Exceptions: standard names that are conventionally uppercase, such as `README.md`, `LICENSE`, `CHANGELOG.md`, `CONTRIBUTING.md`. This avoids case-sensitivity issues across platforms and keeps URLs and links consistent.
 
 ## 3) Contracts & Interfaces
 - All API request/response models must use Pydantic schemas.
@@ -38,8 +39,8 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - If public API schemas change, update:
   - Tests
   - `README.md`
-  - `docs/ARCHITECTURE.md`
-- Feature implementations must update relevant documentation as applicable (for example: `README.md`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/STRUCTURE.md`, and task docs).
+  - `docs/architecture.md`
+- Feature implementations must update relevant documentation as applicable (for example: `README.md`, `docs/architecture.md`, `docs/decisions.md`, `docs/structure.md`, and task docs).
 - Every interface is considered stable.
 - Changes must be backward-compatible or explicitly approved.
 - Every routing decision must include explicit reason codes.
@@ -47,7 +48,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 
 ## 4) Routing & Determinism
 - Routing must be deterministic: same input + same config = same decision.
-- Default routing behavior must be documented in `README.md` and/or `docs/ENGINE_RULES.md`.
+- Default routing behavior must be documented in `README.md` and/or `docs/engine_rules.md`.
 - Any routing rule change requires a DecisionEngine unit test.
 - Thresholds must be configurable (no hard-coded limits).
 
@@ -70,7 +71,7 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 
 ## 7) Dependencies
 - No new dependency without:
-  - Adding an entry in `docs/DECISIONS.md`
+  - Adding an entry in `docs/decisions.md`
   - Documenting why, alternatives considered, and risks
 
 ## 8) Testing Standards
@@ -106,8 +107,8 @@ Agents must stop and ask if:
 When unsure: stop, do not guess.
 
 ## 10) Task Definition & Lifecycle
-- Every task in `.context/TASKS.md` must include: why, in-scope items, out-of-scope items, files expected to change, test requirements, and definition of done.
+- Every task in `.context/tasks.md` must include: why, in-scope items, out-of-scope items, files expected to change, test requirements, and definition of done.
 - Every task must include a status field.
 - When work is complete, mark the task status as `done`.
-- Once the Coder and Tester outputs have been validated (acceptance criteria met, task doc updated), record completion in the task doc and `.context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
+- Once the Coder and Tester outputs have been validated (acceptance criteria met, task doc updated), record completion in the task doc and `.context/tasks.md`, then perform a **git commit** for the completed task (one task = one commit).
 - Completed tasks must be archived under `.context/private/`.

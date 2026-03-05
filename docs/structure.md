@@ -62,31 +62,31 @@ policy-mesh/
 │       ├── test_routes_endpoint.py  # GET /v1/routes endpoint tests
 │       └── test_ui.py               # UI static serving and paths
 ├── docs/                            # Technical docs (public repo docs)
-│   ├── GETTING_STARTED.md           # Prerequisites and step-by-step run/tests guide
-│   ├── STRUCTURE.md                 # This file: annotated project tree
-│   ├── ARCHITECTURE.md              # System design, tech stack, flows, boundaries
-│   ├── DECISIONS.md                 # Dependency/engineering decision log
-│   ├── ENGINE_RULES.md              # Routing policy: rule order, policy file, behavior
-│   ├── POLICY_FILE_SCHEMA.md        # Policy file JSON schema and location
-│   ├── policies.example.json        # Example policy file
-│   ├── API_USAGE.md                 # Request/response contract, curl examples
-│   ├── CONFIGURATION_SCENARIOS.md   # Common .env setups (OpenAI default, local only, etc.)
-│   ├── METRICS.md                  # Prometheus metrics, scrape config, example queries
-│   └── PRIVACY.md                  # What we store (audit), what is sent to providers
+│   ├── getting_started.md          # Prerequisites and step-by-step run/tests guide
+│   ├── structure.md                 # This file: annotated project tree
+│   ├── architecture.md             # System design, tech stack, flows, boundaries
+│   ├── decisions.md                # Dependency/engineering decision log
+│   ├── engine_rules.md             # Routing policy: rule order, policy file, behavior
+│   ├── policy_file_schema.md       # Policy file JSON schema and location
+│   ├── policies.example.json       # Example policy file
+│   ├── api_usage.md                # Request/response contract, curl examples
+│   ├── configuration_scenarios.md  # Common .env setups (OpenAI default, local only, etc.)
+│   ├── metrics.md                  # Prometheus metrics, scrape config, example queries
+│   └── privacy.md                  # What we store (audit), what is sent to providers
 ├── migrations/                      # Alembic migration environment and revisions
 │   ├── env.py                       # Alembic migration runtime setup
 │   └── versions/                    # Versioned migration scripts
 ├── .context/                        # Execution contract and backlog (tracked)
 │   ├── README.md                    # Context usage and contract overview
-│   ├── PROJECT.md                   # Short pointer to product and current state
-│   ├── SCOPE.md                     # In-scope/out-of-scope definition
-│   ├── TASKS.md                     # Active task index and status board
-│   ├── RULES.md                     # Canonical engineering guardrails
-│   ├── AGENTS.md                    # Canonical role model and workflow
+│   ├── project.md                   # Short pointer to product and current state
+│   ├── scope.md                     # In-scope/out-of-scope definition
+│   ├── tasks.md                     # Active task index and status board
+│   ├── rules.md                     # Canonical engineering guardrails
+│   ├── agents.md                    # Canonical role model and workflow
 │   └── private/                     # Task records, planner prompt, retrospect (gitignored)
 │       ├── README.md                # Private folder purpose; canonical = parent .context/
-│       ├── RULES.md                 # Supplemental local/operator notes only
-│       ├── AGENTS.md                # Supplemental local/operator notes only
+│       ├── rules.md                 # Supplemental local/operator notes only
+│       ├── agents.md                # Supplemental local/operator notes only
 │       ├── PROMPT.md                # Planner agent prompt and workflow
 │       ├── RETROSPECT.md            # Process lessons and starter checklist for next project
 │       ├── tasks/                   # Per-task execution docs (handoffs, updates)
@@ -105,11 +105,11 @@ policy-mesh/
 - Place new files in the smallest existing module that matches the task scope.
 - Keep API contracts in `app/api/schemas/`; update tests and docs for public schema changes.
 - Keep routing policy logic in `app/decision/` and provider logic in `app/providers/`.
-- Keep task execution details in `.context/private/tasks/`; keep `.context/TASKS.md` concise.
+- Keep task execution details in `.context/private/tasks/`; keep `.context/tasks.md` concise.
 - Keep tests deterministic and isolated; do not use real provider network calls.
 - Keep CI workflow logic in `.github/workflows/` and expand checks task-by-task.
 
 ## Guardrails for Structure Changes
-- Do not add RAG/vector, multi-tenant auth, or extra providers beyond local + OpenAI + Anthropic unless in scope (see `.context/SCOPE.md`).
+- Do not add RAG/vector, multi-tenant auth, or extra providers beyond local + OpenAI + Anthropic unless in scope (see `.context/scope.md`).
 - Do not introduce new top-level modules/endpoints unless required by an active task.
 - Prefer minimal, reviewable additions over broad abstractions.

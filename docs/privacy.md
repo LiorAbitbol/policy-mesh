@@ -31,7 +31,7 @@ Audit is intended for compliance, debugging, and usage analysis without retainin
 - **OpenAI:** The prompt (and conversation history) is sent to the OpenAI API according to their [data usage policies](https://openai.com/policies/usage-policies). We do not log or persist the raw prompt or response; we only persist the audit fields listed above.
 - **Anthropic:** The prompt (and conversation history) is sent to the Anthropic API according to their data usage policies. We do not log or persist the raw prompt or response; we only persist the audit fields listed above.
 
-Routing is determined by the [engine rules](ENGINE_RULES.md). Use **sensitivity keywords** to route prompts that mention sensitive topics to local only, so that text never reaches the cloud.
+Routing is determined by the [engine rules](engine_rules.md). Use **sensitivity keywords** to route prompts that mention sensitive topics to local only, so that text never reaches the cloud.
 
 ---
 
@@ -39,7 +39,7 @@ Routing is determined by the [engine rules](ENGINE_RULES.md). Use **sensitivity 
 
 | Goal | How |
 |------|-----|
-| **Keep sensitive prompts off the cloud** | Set **sensitivity keywords** in your policy file (POLICY_FILE) so that prompts containing those words route to local. See [Engine rules](ENGINE_RULES.md) and [Configuration scenarios](CONFIGURATION_SCENARIOS.md). |
+| **Keep sensitive prompts off the cloud** | Set **sensitivity keywords** in your policy file (POLICY_FILE) so that prompts containing those words route to local. See [Engine rules](engine_rules.md) and [Configuration scenarios](configuration_scenarios.md). |
 | **Disable audit** | Set `AUDIT_ENABLED=false` in `.env`. No audit events are written. |
 | **Run without a database** | Do not set `DATABASE_URL`, or set `AUDIT_ENABLED=false` if you have a DB for other reasons. |
 

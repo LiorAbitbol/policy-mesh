@@ -1,6 +1,6 @@
 # Engine rules (routing policy)
 
-The **decision engine** chooses which provider (local or cloud) handles each chat request. Rules are evaluated in a fixed order; the first match wins. **Policy is loaded from a JSON file only:** **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid, the application errors. See [Policy file schema](POLICY_FILE_SCHEMA.md) and [policies.example.json](policies.example.json).
+The **decision engine** chooses which provider (local or cloud) handles each chat request. Rules are evaluated in a fixed order; the first match wins. **Policy is loaded from a JSON file only:** **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid, the application errors. See [Policy file schema](policy_file_schema.md) and [policies.example.json](policies.example.json).
 
 ## Rule order
 
@@ -81,7 +81,7 @@ When USD mode is **not** configured (either `max_usd_for_local` or `input_usd_pe
 
 ## Summary (policy file)
 
-Policy is loaded from the JSON file at **POLICY_FILE**. Required top-level keys: **sensitivity** (with **keywords** array) and **cost** (with optional fields and defaults). See [Policy file schema](POLICY_FILE_SCHEMA.md).
+Policy is loaded from the JSON file at **POLICY_FILE**. Required top-level keys: **sensitivity** (with **keywords** array) and **cost** (with optional fields and defaults). See [Policy file schema](policy_file_schema.md).
 
 ---
 

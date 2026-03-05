@@ -161,7 +161,7 @@ Returns the current effective routing policy (read-only). No secrets or keyword 
 
 ### Response (200)
 
-Includes: `rule_order`, `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `usd_cost_mode_active`, `cost_max_usd_for_local`, `llm_input_usd_per_1m_tokens`, `cost_chars_per_token`, `default_provider`. See OpenAPI schema or [Engine rules](ENGINE_RULES.md) for meaning.
+Includes: `rule_order`, `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `usd_cost_mode_active`, `cost_max_usd_for_local`, `llm_input_usd_per_1m_tokens`, `cost_chars_per_token`, `default_provider`. See OpenAPI schema or [Engine rules](engine_rules.md) for meaning.
 
 **Example:**
 
@@ -183,7 +183,7 @@ curl -s http://127.0.0.1:8000/v1/health
 
 ## GET /v1/metrics
 
-Prometheus-format metrics (counters and histograms for chat requests). See [Metrics](METRICS.md) for details.
+Prometheus-format metrics (counters and histograms for chat requests). See [Metrics](metrics.md) for details.
 
 ```bash
 curl -s http://127.0.0.1:8000/v1/metrics

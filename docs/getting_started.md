@@ -64,7 +64,7 @@ Policy (sensitivity keywords, cost thresholds, default provider) is loaded from 
    ```env
    POLICY_FILE=./policies.json
    ```
-2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](docs/POLICY_FILE_SCHEMA.md).
+2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](policy_file_schema.md).
 
 #### Required for audit (Postgres)
 

@@ -368,7 +368,7 @@ Express the cost policy price in **USD per 1M input tokens** (policy key `input_
 - Support both units; rejected to keep a single source of truth.
 
 ### Risks
-- Breaking change for existing policy files; documented in POLICY_FILE_SCHEMA migration note.
+- Breaking change for existing policy files; documented in policy_file_schema.md migration note.
 
 ---
 

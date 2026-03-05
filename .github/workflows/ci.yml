@@ -19,10 +19,10 @@ jobs:
           set -euo pipefail
           required_files=(
             "README.md"
-            ".context/TASKS.md"
-            "docs/ARCHITECTURE.md"
-            "docs/DECISIONS.md"
-            "docs/STRUCTURE.md"
+            ".context/tasks.md"
+            "docs/architecture.md"
+            "docs/decisions.md"
+            "docs/structure.md"
           )
 
           for path in "${required_files[@]}"; do
