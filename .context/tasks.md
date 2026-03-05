@@ -18,7 +18,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 
 ## Current Status Snapshot
 - Last Updated: 2026-03-05
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303`, `T-305`, `T-306` (M3: cost policy per 1M tokens)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303`, `T-305`, `T-306`, `T-307`, `T-308`
 - In Progress: none
 - Next: T-304
 
@@ -47,6 +47,8 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 | 20 | T-304 | M3: Future LLM capability policy (docs only) | `todo` | `planner` | `.context/private/tasks/T-304.md` |
 | 21 | T-305 | M3: Policy default_provider local|public + document policy file location | `done` | `planner` | `.context/private/tasks/T-305.md` |
 | 22 | T-306 | M3: Cost policy use input_usd_per_1m_tokens (match provider pricing) | `done` | `planner` | `.context/private/tasks/T-306.md` |
+| 23 | T-307 | M3: Ship default policy in Docker image (app/policies.json) | `done` | `planner` | `.context/private/tasks/T-307.md` |
+| 24 | T-308 | M3: Policy default_provider defaults to local | `done` | `planner` | `.context/private/tasks/T-308.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -156,7 +158,17 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
   - Private Task Doc: `.context/private/tasks/T-305.md`
   - Acceptance: Policy file default_provider is "local"|"public"; "public" resolved from PUBLIC_LLM_URL at decision time. Docs state where policies.json lives (in-repo example in docs/; runtime path via POLICY_FILE with examples).
 - T-306: M3: Cost policy use input_usd_per_1m_tokens (match provider pricing)
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-306.md`
   - Acceptance: Policy and config use USD per 1M input tokens; formula cost_usd = (tokens/1e6)*price_per_1m; docs and examples use per-1M values.
+- T-307: M3: Ship default policy in Docker image (app/policies.json)
+  - Status: `done`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-307.md`
+  - Acceptance: Default policy at app/policies.json is copied into image; docker-compose sets POLICY_FILE=./app/policies.json; docs updated for Docker vs host.
+- T-308: M3: Policy default_provider defaults to local
+  - Status: `done`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-308.md`
+  - Acceptance: Shipped policy and loader default to "local"; invalid/missing default_provider falls back to "local"; docs and tests updated; terminology note (local vs private).
