@@ -54,17 +54,17 @@ Edit `.env` in a text editor. You **must** set at least the following for the fu
 
 Policy (sensitivity keywords, cost thresholds, default provider) is loaded from a JSON file only. **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid JSON, the application errors.
 
-**Where the policy file lives:** An example lives in **docs/** (`docs/policies.example.json`). At runtime, **POLICY_FILE** can be any path you choose (e.g. `./policies.json` next to the app, or `/etc/policy-mesh/policies.json`). Copy and customize:
-
-1. Copy the example and set the path in `.env`:
-   ```bash
-   cp docs/policies.example.json ./policies.json
-   ```
-   In `.env`:
-   ```env
-   POLICY_FILE=./policies.json
-   ```
-2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](policy_file_schema.md).
+**Where the policy file lives:**
+- **Docker:** The image includes a default policy at **`app/policies.json`** (copied from the repo). `docker-compose.yml` sets `POLICY_FILE=./app/policies.json`, so the app runs without extra setup. To use your own policy, mount a file and set `POLICY_FILE` to its path in the container.
+- **Host or custom Docker:** An example lives in **docs/** (`docs/policies.example.json`). Copy and set the path in `.env`:
+  ```bash
+  cp docs/policies.example.json ./policies.json
+  ```
+  In `.env`:
+  ```env
+  POLICY_FILE=./policies.json
+  ```
+  Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](policy_file_schema.md).
 
 #### Required for audit (Postgres)
 

@@ -45,6 +45,7 @@ policy-mesh/
 │   │   └── service.py               # Audit write orchestration helpers
 │   ├── static/                      # Minimal UI (T-203): single-page static HTML/JS
 │   │   └── index.html               # Chat, rules (GET /v1/routes), audit (GET /v1/audit/{id})
+│   ├── policies.json                # Default policy (in image; Docker uses POLICY_FILE=./app/policies.json)
 │   └── services/                    # Application orchestration services
 │       └── chat_orchestrator.py     # /v1/chat flow: decision -> provider -> audit -> metrics
 ├── tests/                           # Automated tests (no real network calls)
