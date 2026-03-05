@@ -44,13 +44,13 @@ End-to-end path for each chat request:
 
 ```mermaid
 flowchart TB
-  Recv[Receive POST /v1/chat] --> Extract[Extract prompt and length]
-  Extract --> Decide[DecisionEngine: policy from POLICY_FILE]
-  Decide --> RuleOrder[Sensitivity → Cost → Default]
-  RuleOrder --> Provider[Call provider: local, openai, or anthropic]
-  Provider --> Audit[Persist audit event]
-  Audit --> Metrics[Record metrics]
-  Metrics --> Response[Return response with provider and reason_codes]
+  Recv["Receive POST /v1/chat"] --> Extract["Extract prompt and length"]
+  Extract --> Decide["DecisionEngine (policy from POLICY_FILE)"]
+  Decide --> RuleOrder["Sensitivity then Cost then Default"]
+  RuleOrder --> Provider["Call provider: local, openai, or anthropic"]
+  Provider --> Audit["Persist audit event"]
+  Audit --> Metrics["Record metrics"]
+  Metrics --> Response["Return response with provider and reason_codes"]
 ```
 
 ## Decision flow (routing rules)
@@ -59,14 +59,14 @@ The engine applies rules in order; the first match wins:
 
 ```mermaid
 flowchart TB
-  Start[Prompt] --> Sens[Sensitivity: keyword in prompt?]
-  Sens -->|Yes| Local1[Route to local]
-  Sens -->|No| Cost[Cost: under threshold?]
-  Cost -->|Yes| Local2[Route to local]
-  Cost -->|No| Default[Default provider]
-  Default --> Local3[local]
-  Default --> Public[public]
-  Public --> Resolve[Resolve from PUBLIC_LLM_URL]
+  Start[Prompt] --> Sens["Sensitivity: keyword in prompt?"]
+  Sens -->|Yes| Local1["Route to local"]
+  Sens -->|No| Cost["Cost: under threshold?"]
+  Cost -->|Yes| Local2["Route to local"]
+  Cost -->|No| DefaultNode["Default provider"]
+  DefaultNode --> Local3[local]
+  DefaultNode --> PublicNode[public]
+  PublicNode --> Resolve["Resolve from PUBLIC_LLM_URL"]
   Resolve --> OpenAI[openai]
   Resolve --> Anthropic[anthropic]
 ```
