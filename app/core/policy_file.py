@@ -5,7 +5,6 @@ Unknown top-level keys are ignored (extensibility). Uses stdlib json only.
 
 import json
 import os
-from pathlib import Path
 
 from app.core.config import PolicyConfig
 
@@ -111,10 +110,10 @@ def load_policy_config(path: str | None = None) -> PolicyConfig:
     if cost_chars_per_token <= 0:
         cost_chars_per_token = 4
 
-    default_provider_raw = (cost.get("default_provider") or "openai")
+    default_provider_raw = (cost.get("default_provider") or "public")
     default_provider = str(default_provider_raw).strip().lower()
-    if default_provider not in ("local", "openai", "anthropic"):
-        default_provider = "openai"
+    if default_provider not in ("local", "public"):
+        default_provider = "public"
 
     return PolicyConfig(
         sensitivity_keywords=sensitivity_keywords,

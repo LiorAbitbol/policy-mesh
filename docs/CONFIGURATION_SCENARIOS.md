@@ -1,6 +1,6 @@
 # Configuration scenarios
 
-This page gives copy-paste snippets for common setups. **Policy** (sensitivity, cost, default provider) is loaded from the JSON file at **POLICY_FILE** only; see [Policy file schema](POLICY_FILE_SCHEMA.md) and [policies.example.json](policies.example.json). For behavior, see [Engine rules](ENGINE_RULES.md). Start from [.env.example](../.env.example) and set **POLICY_FILE** to your policy file path.
+This page gives copy-paste snippets for common setups. **Policy** (sensitivity, cost, default provider) is loaded from the JSON file at **POLICY_FILE** only; see [Policy file schema](POLICY_FILE_SCHEMA.md) and [policies.example.json](policies.example.json). The in-repo example lives in **docs/**; at runtime **POLICY_FILE** can be any path (e.g. `./policies.json` or `/etc/policy-mesh/policies.json`). Policy `default_provider` is **`local`** or **`public`** only; when `public`, the concrete provider (openai vs anthropic) comes from **PUBLIC_LLM_URL**. For behavior, see [Engine rules](ENGINE_RULES.md). Start from [.env.example](../.env.example) and set **POLICY_FILE** to your policy file path.
 
 ---
 
@@ -22,7 +22,7 @@ This page gives copy-paste snippets for common setups. **Policy** (sensitivity, 
     "max_usd_for_local": null,
     "input_usd_per_1k_tokens": null,
     "chars_per_token": 4,
-    "default_provider": "openai"
+    "default_provider": "public"
   }
 }
 ```
@@ -61,7 +61,7 @@ Ensure Ollama is running and a model is pulled if you want those sensitive reque
     "max_usd_for_local": 0.10,
     "input_usd_per_1k_tokens": 0.0015,
     "chars_per_token": 4,
-    "default_provider": "openai"
+    "default_provider": "public"
   }
 }
 ```

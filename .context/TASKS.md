@@ -18,7 +18,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 
 ## Current Status Snapshot
 - Last Updated: 2026-03-05
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303` (M3: external JSON policy file)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303`, `T-305` (M3: policy default_provider local|public + policy file location docs)
 - In Progress: none
 - Next: T-304
 
@@ -45,6 +45,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 | 18 | T-302 | M3: Anthropic provider adapter + orchestrator wiring | `done` | `planner` | `.context/private/tasks/T-302.md` |
 | 19 | T-303 | M3: External JSON policy file (sensitivity + cost, extensible) | `done` | `planner` | `.context/private/tasks/T-303.md` |
 | 20 | T-304 | M3: Future LLM capability policy (docs only) | `todo` | `planner` | `.context/private/tasks/T-304.md` |
+| 21 | T-305 | M3: Policy default_provider local|public + document policy file location | `done` | `planner` | `.context/private/tasks/T-305.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -148,3 +149,8 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-304.md`
   - Acceptance: Docs section on future capability policy (requirements, options, not in this version).
+- T-305: M3: Policy default_provider as local|public + document policy file location
+  - Status: `done`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-305.md`
+  - Acceptance: Policy file default_provider is "local"|"public"; "public" resolved from PUBLIC_LLM_URL at decision time. Docs state where policies.json lives (in-repo example in docs/; runtime path via POLICY_FILE with examples).

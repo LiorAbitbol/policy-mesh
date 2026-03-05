@@ -54,7 +54,9 @@ Edit `.env` in a text editor. You **must** set at least the following for the fu
 
 Policy (sensitivity keywords, cost thresholds, default provider) is loaded from a JSON file only. **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid JSON, the application errors.
 
-1. Copy the example policy file and set the path in `.env`:
+**Where the policy file lives:** An example lives in **docs/** (`docs/policies.example.json`). At runtime, **POLICY_FILE** can be any path you choose (e.g. `./policies.json` next to the app, or `/etc/policy-mesh/policies.json`). Copy and customize:
+
+1. Copy the example and set the path in `.env`:
    ```bash
    cp docs/policies.example.json ./policies.json
    ```
@@ -62,7 +64,7 @@ Policy (sensitivity keywords, cost thresholds, default provider) is loaded from 
    ```env
    POLICY_FILE=./policies.json
    ```
-2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`). See [Policy file schema](docs/POLICY_FILE_SCHEMA.md).
+2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](docs/POLICY_FILE_SCHEMA.md).
 
 #### Required for audit (Postgres)
 
@@ -77,15 +79,12 @@ The default values in `.env.example` match the Postgres container. If you didn�
 
 #### Required for chat: choose a default provider
 
-Set the default provider in your **policy file** (`cost.default_provider`): `openai`, `local`, or `anthropic`.
+Set the default in your **policy file** (`cost.default_provider`): **`local`** or **`public`** only. When `public`, which concrete provider (OpenAI vs Anthropic) is determined by **PUBLIC_LLM_URL** at runtime.
 
-**Option A — Use OpenAI (or other public LLM) as default**
+**Option A — Use a public LLM (OpenAI or Anthropic) as default**
 
-- Set your public LLM API key in `.env` (required):
-  ```env
-  PUBLIC_LLM_API_KEY=sk-your-actual-key-here
-  ```
-- In `policies.json`, set `"cost": { ..., "default_provider": "openai" }`.
+- Set your public LLM API key in `.env`: `PUBLIC_LLM_API_KEY=sk-your-actual-key-here`, and set **PUBLIC_LLM_URL** if needed (defaults to OpenAI).
+- In `policies.json`, set `"cost": { ..., "default_provider": "public" }`.
 
 **Option B — Use Ollama (local) as default**
 

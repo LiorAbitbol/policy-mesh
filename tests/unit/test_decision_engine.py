@@ -1,5 +1,7 @@
 """Unit tests for DecisionEngine: sensitive, cost, default branches and determinism."""
 
+from unittest.mock import patch
+
 import pytest
 
 from app.core.config import PolicyConfig
@@ -14,7 +16,7 @@ from app.decision.reason_codes import (
 def _config(
     keywords: tuple[str, ...] = (),
     max_length: int = 1000,
-    default_provider: str = "openai",
+    default_provider: str = "public",
     cost_max_usd_for_local: float | None = None,
     llm_input_usd_per_1k_tokens: float | None = None,
     cost_chars_per_token: int = 4,
@@ -62,7 +64,7 @@ def test_cost_branch_under_threshold_returns_local() -> None:
 
 
 def test_cost_branch_over_threshold_returns_default() -> None:
-    """Cost: prompt length over threshold → default provider (openai)."""
+    """Cost: prompt length over threshold → default (public resolves to openai via get_public_provider_from_url)."""
     config = _config(keywords=(), max_length=50)
     result = decide(prompt_text="x" * 100, prompt_length=100, config=config)
     assert result["provider"] == "openai"
@@ -70,8 +72,8 @@ def test_cost_branch_over_threshold_returns_default() -> None:
 
 
 def test_default_branch_returns_openai_and_reason_code() -> None:
-    """Default: no sensitivity, over cost threshold → provider=openai, DEFAULT_OPENAI."""
-    config = _config(keywords=(), max_length=10, default_provider="openai")
+    """Default: no sensitivity, over cost threshold → default_provider public resolves to openai, DEFAULT_OPENAI."""
+    config = _config(keywords=(), max_length=10, default_provider="public")
     result = decide(prompt_text="A long prompt that exceeds cost threshold", prompt_length=100, config=config)
     assert result["provider"] == "openai"
     assert result["reason_codes"] == [DEFAULT_OPENAI]
@@ -85,11 +87,21 @@ def test_default_provider_configurable() -> None:
     assert result["reason_codes"] == [DEFAULT_OPENAI]
 
 
-def test_default_provider_anthropic_returns_anthropic() -> None:
-    """Default provider can be set to anthropic; decision returns provider=anthropic."""
-    config = _config(keywords=(), max_length=10, default_provider="anthropic")
-    result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
+def test_default_provider_public_resolves_to_anthropic() -> None:
+    """When default_provider is public, decision returns get_public_provider_from_url() (e.g. anthropic)."""
+    config = _config(keywords=(), max_length=10, default_provider="public")
+    with patch("app.decision.engine.get_public_provider_from_url", return_value="anthropic"):
+        result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
     assert result["provider"] == "anthropic"
+    assert result["reason_codes"] == [DEFAULT_OPENAI]
+
+
+def test_default_provider_public_resolves_to_openai() -> None:
+    """When default_provider is public, decision returns get_public_provider_from_url() (e.g. openai)."""
+    config = _config(keywords=(), max_length=10, default_provider="public")
+    with patch("app.decision.engine.get_public_provider_from_url", return_value="openai"):
+        result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
+    assert result["provider"] == "openai"
     assert result["reason_codes"] == [DEFAULT_OPENAI]
 
 
@@ -132,11 +144,11 @@ def test_cost_usd_mode_under_threshold_returns_local() -> None:
 
 
 def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
-    """USD-mode: estimated cost over threshold → default provider with DEFAULT_OPENAI reason code."""
+    """USD-mode: estimated cost over threshold → default (public) provider with DEFAULT_OPENAI reason code."""
     config = _config(
         keywords=(),
         max_length=10_000,
-        default_provider="openai",
+        default_provider="public",
         cost_max_usd_for_local=0.05,
         llm_input_usd_per_1k_tokens=0.02,
         cost_chars_per_token=4,

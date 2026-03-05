@@ -25,7 +25,7 @@ class PolicyConfig:
 
     sensitivity_keywords: tuple[str, ...]
     cost_max_prompt_length_for_local: int
-    default_provider: str  # "local" | "openai" | "anthropic"
+    default_provider: str  # "local" | "public" (resolved to openai|anthropic in decision engine)
     cost_max_usd_for_local: float | None
     llm_input_usd_per_1k_tokens: float | None
     cost_chars_per_token: int

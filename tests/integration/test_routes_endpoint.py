@@ -22,7 +22,7 @@ def test_get_routes_returns_200_and_expected_keys() -> None:
     assert body["rule_order"] == ["sensitivity", "cost", "default"]
     assert body["sensitivity_keyword_count"] >= 0
     assert body["cost_max_prompt_length_for_local"] >= 0
-    assert body["default_provider"] in ("local", "openai", "anthropic")
+    assert body["default_provider"] in ("local", "public")
 
 
 def test_get_routes_reflects_policy_file_sensitivity_keywords(
@@ -67,18 +67,18 @@ def test_get_routes_reflects_policy_file_default_provider_local(
     assert resp.json()["default_provider"] == "local"
 
 
-def test_get_routes_reflects_policy_file_default_provider_anthropic(
+def test_get_routes_reflects_policy_file_default_provider_public(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     policy = json.loads(DEFAULT_POLICY_JSON)
-    policy["cost"]["default_provider"] = "anthropic"
+    policy["cost"]["default_provider"] = "public"
     path = tmp_path / "policies.json"
     path.write_text(json.dumps(policy), encoding="utf-8")
     monkeypatch.setenv("POLICY_FILE", str(path))
     client = TestClient(app)
     resp = client.get("/v1/routes")
     assert resp.status_code == 200
-    assert resp.json()["default_provider"] == "anthropic"
+    assert resp.json()["default_provider"] == "public"
 
 
 def test_get_routes_available_public_provider_reflects_public_llm_url(monkeypatch: pytest.MonkeyPatch) -> None:

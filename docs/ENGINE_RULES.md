@@ -79,7 +79,7 @@ When USD mode is **not** configured (either `max_usd_for_local` or `input_usd_pe
 
 | Policy file (cost) | Type | Effect |
 |-------------------|------|--------|
-| `default_provider` | `openai` \| `local` \| `anthropic` | Provider used when no rule above matches. Default: `openai`. |
+| `default_provider` | `local` \| `public` | Default when no rule above matches. When `public`, the resolved provider (openai or anthropic) is derived from PUBLIC_LLM_URL at decision time. Default: `public`. |
 
 **Reason code:** The response uses `default_openai` when the default provider is chosen (even if the provider is `local`—the code name is historical).
 

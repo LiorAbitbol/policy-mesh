@@ -2,7 +2,7 @@
 
 from typing import TypedDict
 
-from app.core.config import PolicyConfig, get_policy_config
+from app.core.config import PolicyConfig, get_policy_config, get_public_provider_from_url
 from app.decision.policies import cost_prefer_local, sensitivity_match
 from app.decision.reason_codes import (
     COST_PREFER_LOCAL,
@@ -42,5 +42,9 @@ def decide(
     ):
         return {"provider": "local", "reason_codes": [COST_PREFER_LOCAL]}
 
-    # 3. Default: openai (or config.default_provider)
-    return {"provider": config.default_provider, "reason_codes": [DEFAULT_OPENAI]}
+    # 3. Default: local or public (resolve public → openai|anthropic from PUBLIC_LLM_URL)
+    if config.default_provider == "local":
+        provider = "local"
+    else:
+        provider = get_public_provider_from_url()
+    return {"provider": provider, "reason_codes": [DEFAULT_OPENAI]}
