@@ -14,7 +14,7 @@ This guide describes how to call the Policy Mesh API from scripts, tools, or you
 
 ## POST /v1/chat
 
-Send a chat request. The engine routes to a provider (local or OpenAI), calls it, persists an audit event, and returns the reply with routing metadata.
+Send a chat request. The engine routes to a provider (local, OpenAI, or Anthropic), calls it, persists an audit event, and returns the reply with routing metadata.
 
 ### Request body
 
@@ -50,7 +50,7 @@ Send a chat request. The engine routes to a provider (local or OpenAI), calls it
 | Field | Type | Description |
 |-------|------|-------------|
 | `request_id` | string | Unique ID for this request; use it to fetch the audit event from `/v1/audit/{request_id}`. |
-| `provider` | string | `local` or `openai` — which provider handled the request. |
+| `provider` | string | `local`, `openai`, or `anthropic` — which provider handled the request. |
 | `reason_codes` | array of strings | Why this provider was chosen (e.g. `sensitive_keyword_match`, `cost_prefer_local`, `default_openai`). |
 | `content` | string | The assistant reply (present on success). |
 | `error` | null | Omitted or null on success. |

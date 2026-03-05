@@ -6,7 +6,7 @@ The **decision engine** chooses which provider (local or cloud) handles each cha
 
 1. **Sensitivity** — If the prompt contains any configured keyword → route to **local**.
 2. **Cost** — If the prompt is under the cost threshold (length or USD) → route to **local**.
-3. **Default** — Otherwise → use the configured default provider (**openai** or **local**).
+3. **Default** — Otherwise → use the configured default provider (**local** or **public**).
 
 The response always includes `provider` and `reason_codes` so you can see why a request went to a given provider.
 
@@ -16,17 +16,11 @@ The response always includes `provider` and `reason_codes` so you can see why a 
 
 **Purpose:** Keep prompts that mention sensitive topics on the local provider (e.g. “internal”, “confidential”) so they never leave your network.
 
-| Variable | Type | Default | Effect |
-|----------|------|---------|--------|
-| `SENSITIVITY_KEYWORDS` | Comma-separated list | *(empty)* | Keywords that trigger local routing when found in the prompt (case-insensitive). |
+Configure **sensitivity.keywords** (array of strings) in the policy file.
 
-**Behavior:**
+If the array is empty or missing, the rule is **skipped**. The prompt is checked for **substring** matches; any keyword present (case-insensitive) → route to **local** with reason code `sensitive_keyword_match`.
 
-- If `SENSITIVITY_KEYWORDS` is empty or unset, this rule is **skipped** (no keywords to match).
-- The prompt is checked for **substring** matches; any keyword present → route to **local** with reason code `sensitive_keyword_match`.
-- Matching is case-insensitive.
-
-**Example:** `SENSITIVITY_KEYWORDS=internal,confidential,secret` → any prompt containing “internal”, “confidential”, or “secret” goes to local.
+**Example:** In the policy file, `"keywords": ["internal", "confidential", "secret"]` → any prompt containing "internal", "confidential", or "secret" goes to local.
 
 ---
 

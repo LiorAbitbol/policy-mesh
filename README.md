@@ -4,12 +4,12 @@ A local-first AI gateway that routes chat requests between local and cloud provi
 
 ## Tech stack
 
-**Python 3.11+**, **FastAPI**, **PostgreSQL**, **Ollama** (local LLM), **OpenAI** (cloud). Run with **Docker Compose** or on the host. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full stack and request flow.
+**Python 3.11+**, **FastAPI**, **PostgreSQL**, **Ollama** (local LLM), **OpenAI** and **Anthropic** (cloud). Run with **Docker Compose** or on the host. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full stack, request process flow, and decision flow diagrams.
 
 ## What it does
 
 - **Routes** each request deterministically: sensitivity (keywords) → cost (length or USD threshold) → default provider.
-- **Supports** Ollama (local) and OpenAI (cloud). Every decision returns explicit reason codes.
+- **Supports** local LLM (e.g. Ollama) and cloud (OpenAI, Anthropic). Every decision returns explicit reason codes.
 - **Persists** one audit event per chat (prompt hash and metadata only; no raw prompts).
 - **Exposes** Prometheus-compatible metrics and a read-only view of the effective routing policy (`/v1/routes`).
 - **Serves** a minimal static UI at `/` and `/ui` for chat, rules, and audit.
@@ -18,7 +18,7 @@ A local-first AI gateway that routes chat requests between local and cloud provi
 
 ```bash
 git clone https://github.com/LiorAbitbol/policy-mesh.git && cd policy-mesh
-cp .env.example .env   # edit with your API key and/or provider choices
+cp .env.example .env   # edit with your API key, set POLICY_FILE to your policy JSON path (see Policy file schema), and/or provider choices
 ```
 
 **Run with Docker (recommended):** Postgres → migrations → app (and optionally Ollama). Full step-by-step: **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)**.
@@ -37,20 +37,22 @@ cp .env.example .env   # edit with your API key and/or provider choices
 | `GET /v1/routes` | Effective routing policy (read-only; no secrets) |
 | `GET /v1/metrics` | Prometheus metrics |
 
-OpenAPI docs at `/docs` when the app is running. Config is via environment variables; see [.env.example](.env.example) and the [Getting started](docs/GETTING_STARTED.md) guide.
+OpenAPI docs at `/docs` when the app is running. Config is via environment variables and a required policy file (**POLICY_FILE**); see [.env.example](.env.example), [Getting started](docs/GETTING_STARTED.md), and [Policy file schema](docs/POLICY_FILE_SCHEMA.md).
 
 ## Documentation
 
 | Doc | Contents |
 |-----|----------|
 | **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** | Prerequisites, Docker flow, migrations, verification, troubleshooting |
-| **[docs/ENGINE_RULES.md](docs/ENGINE_RULES.md)** | Routing policy: rule order, env variables, and how they affect behavior |
+| **[docs/ENGINE_RULES.md](docs/ENGINE_RULES.md)** | Routing policy: rule order, policy file (POLICY_FILE), and how they affect behavior |
+| **[docs/POLICY_FILE_SCHEMA.md](docs/POLICY_FILE_SCHEMA.md)** | Policy file JSON schema and location |
+| **[docs/policies.example.json](docs/policies.example.json)** | Example policy file |
 | **[docs/API_USAGE.md](docs/API_USAGE.md)** | Request/response contract, curl examples, integration snippet |
 | **[docs/CONFIGURATION_SCENARIOS.md](docs/CONFIGURATION_SCENARIOS.md)** | Common setups: OpenAI default + sensitive local, local only, USD cost, audit off |
 | **[docs/METRICS.md](docs/METRICS.md)** | Prometheus metrics, labels, scrape config, example queries |
 | **[docs/PRIVACY.md](docs/PRIVACY.md)** | What we store (audit), what is sent to providers, controlling data flow |
 | **[.env.example](.env.example)** | All env vars with short descriptions |
-| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | System design, request lifecycle, boundaries |
+| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | System design, request process flow, decision flow, boundaries |
 | **[docs/DECISIONS.md](docs/DECISIONS.md)** | Decision log and dependency choices |
 | **[.context/](.context/)** | Task backlog, scope, and workflow (see [.context/README.md](.context/README.md)) |
 

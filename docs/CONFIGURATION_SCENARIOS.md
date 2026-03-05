@@ -27,7 +27,7 @@ This page gives copy-paste snippets for common setups. **Policy** (sensitivity, 
 }
 ```
 
-Ensure Ollama is running and a model is pulled if you want those sensitive requests to succeed.
+Ensure Ollama is running and a model is pulled if you want those sensitive requests to succeed. For Anthropic as default, set `PUBLIC_LLM_URL` to the Anthropic API base (e.g. `https://api.anthropic.com`) and use your Anthropic API key in `PUBLIC_LLM_API_KEY`.
 
 ---
 

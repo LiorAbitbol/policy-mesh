@@ -16,13 +16,13 @@ Build a local-first AI gateway that routes requests deterministically between lo
 | **Database** | PostgreSQL 16 | Audit event persistence |
 | **ORM / migrations** | SQLAlchemy, Alembic | Schema and migrations |
 | **DB driver** | psycopg (async) | Postgres connectivity |
-| **HTTP client** | httpx | Calls to Ollama and OpenAI APIs |
+| **HTTP client** | httpx | Calls to Ollama, OpenAI, and Anthropic APIs |
 | **Metrics** | prometheus_client | Counters and histograms at `/v1/metrics` |
 | **Local LLM** | Ollama | Optional; runs as a container or on host |
-| **Cloud LLM** | OpenAI API | Optional; requires API key |
+| **Cloud LLM** | OpenAI, Anthropic APIs | Optional; requires PUBLIC_LLM_API_KEY; provider inferred from PUBLIC_LLM_URL |
 | **Containers** | Docker, Docker Compose | Postgres, app, and optionally Ollama; see [GETTING_STARTED](GETTING_STARTED.md) |
 
-The app can run **in Docker** (recommended: `docker compose up`) or **on the host** (Postgres elsewhere, `uvicorn app.main:app`). Config is via environment variables (see [.env.example](../.env.example)).
+The app can run **in Docker** (recommended: `docker compose up`) or **on the host** (Postgres elsewhere, `uvicorn app.main:app`). Config is via environment variables and a required policy file (POLICY_FILE); see [.env.example](../.env.example) and [Policy file schema](POLICY_FILE_SCHEMA.md).
 
 ## High-Level Flow
 
@@ -33,14 +33,50 @@ flowchart LR
   decision --> provider[ProviderAdapter]
   provider --> ollama[Ollama]
   provider --> openai[OpenAI]
+  provider --> anthropic[Anthropic]
   provider --> audit[AuditPersistence]
   api --> metrics[Metrics]
 ```
 
+## Request process flow (POST /v1/chat)
+
+End-to-end path for each chat request:
+
+```mermaid
+flowchart TB
+  Recv[Receive POST /v1/chat] --> Extract[Extract prompt and length]
+  Extract --> Decide[DecisionEngine: policy from POLICY_FILE]
+  Decide --> RuleOrder[Sensitivity → Cost → Default]
+  RuleOrder --> Provider[Call provider: local, openai, or anthropic]
+  Provider --> Audit[Persist audit event]
+  Audit --> Metrics[Record metrics]
+  Metrics --> Response[Return response with provider and reason_codes]
+```
+
+## Decision flow (routing rules)
+
+The engine applies rules in order; the first match wins:
+
+```mermaid
+flowchart TB
+  Start[Prompt] --> Sens[Sensitivity: keyword in prompt?]
+  Sens -->|Yes| Local1[Route to local]
+  Sens -->|No| Cost[Cost: under threshold?]
+  Cost -->|Yes| Local2[Route to local]
+  Cost -->|No| Default[Default provider]
+  Default --> Local3[local]
+  Default --> Public[public]
+  Public --> Resolve[Resolve from PUBLIC_LLM_URL]
+  Resolve --> OpenAI[openai]
+  Resolve --> Anthropic[anthropic]
+```
+
+Policy (sensitivity keywords, cost thresholds, default provider) is loaded from the JSON file at **POLICY_FILE** only. See [Engine rules](ENGINE_RULES.md) and [Policy file schema](POLICY_FILE_SCHEMA.md).
+
 ## Core Components
 - `API Layer`: Exposes `/v1/health`, `/v1/chat`, `/v1/metrics`, `/v1/routes`, `/v1/audit/{request_id}`.
 - `DecisionEngine`: Produces deterministic routing decisions and explicit reason codes.
-- `Providers`: Shared provider interface with `ollama` and `openai` adapters.
+- `Providers`: Shared provider interface with `ollama`, `openai`, and `anthropic` adapters.
 - `Audit`: Persists one audit event per chat request in Postgres (prompt hash and metadata only).
 - `Telemetry`: Structured JSON logs and Prometheus-compatible metrics.
 - `UI`: Minimal static HTML/JS at `/` and `/ui` (chat, rules, audit).
@@ -81,7 +117,7 @@ flowchart LR
 
 ## Boundaries
 - **In scope:** local/openai routing, audit persistence (Postgres), metrics, API with OpenAPI docs (`/docs`), `/v1/routes`, `/v1/audit/{request_id}`, minimal static UI at `/` and `/ui`. See `.context/SCOPE.md` for the canonical scope list.
-- **Out of scope:** RAG/vector DB, multi-tenant auth, additional providers, fancy UI, agent workflows.
+- **Out of scope:** RAG/vector DB, multi-tenant auth, additional providers beyond local + OpenAI + Anthropic, fancy UI, agent workflows.
 
 M1 (vertical slice) and M2 (operator UX: request_id, audit fetch, `/v1/routes`, USD cost rule, minimal UI) are implemented. Current interfaces:
 

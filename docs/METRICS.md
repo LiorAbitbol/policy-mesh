@@ -29,7 +29,7 @@ curl -s http://localhost:8000/v1/metrics
 
 | Label | Values | Description |
 |-------|--------|-------------|
-| `provider` | `local`, `openai` | Which provider handled the request. |
+| `provider` | `local`, `openai`, `anthropic` | Which provider handled the request. |
 | `status` | `success`, `failure` | Outcome of the provider call. |
 
 **Example:**
@@ -52,7 +52,7 @@ chat_requests_total{provider="local",status="failure"} 1.0
 
 | Label | Values | Description |
 |-------|--------|-------------|
-| `provider` | `local`, `openai` | Which provider handled the request. |
+| `provider` | `local`, `openai`, `anthropic` | Which provider handled the request. |
 
 **Buckets (seconds):** `0.01`, `0.05`, `0.1`, `0.5`, `1.0`, `5.0` (plus `+Inf`).
 

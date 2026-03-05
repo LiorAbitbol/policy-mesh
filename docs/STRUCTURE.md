@@ -27,15 +27,17 @@ policy-mesh/
 │   │       └── routes.py            # GET /v1/routes (effective policy)
 │   ├── core/                        # Cross-cutting app internals
 │   │   ├── config.py                # Environment-driven settings
+│   │   ├── policy_file.py           # Loads and validates policy from POLICY_FILE; builds PolicyConfig
 │   │   └── telemetry.py             # Metrics (Prometheus) and recording
 │   ├── decision/                    # Deterministic routing policy engine
 │   │   ├── engine.py                # Decision orchestration logic
 │   │   ├── policies.py              # Cost/sensitivity policy checks
 │   │   └── reason_codes.py          # Explicit decision reason code definitions
-│   ├── providers/                   # Provider adapters (Ollama + OpenAI)
+│   ├── providers/                   # Provider adapters (Ollama, OpenAI, Anthropic)
 │   │   ├── base.py                  # Shared provider interface contract
 │   │   ├── ollama.py                # Ollama client adapter
-│   │   └── openai.py                # OpenAI client adapter
+│   │   ├── openai.py                # OpenAI client adapter
+│   │   └── anthropic.py             # Anthropic client adapter
 │   ├── audit/                       # Audit model and persistence logic
 │   │   ├── models.py                # AuditEvent model(s)
 │   │   ├── context.py               # Async session/engine setup for audit
@@ -64,7 +66,9 @@ policy-mesh/
 │   ├── STRUCTURE.md                 # This file: annotated project tree
 │   ├── ARCHITECTURE.md              # System design, tech stack, flows, boundaries
 │   ├── DECISIONS.md                 # Dependency/engineering decision log
-│   ├── ENGINE_RULES.md              # Routing policy: rule order, env vars, behavior
+│   ├── ENGINE_RULES.md              # Routing policy: rule order, policy file, behavior
+│   ├── POLICY_FILE_SCHEMA.md        # Policy file JSON schema and location
+│   ├── policies.example.json        # Example policy file
 │   ├── API_USAGE.md                 # Request/response contract, curl examples
 │   ├── CONFIGURATION_SCENARIOS.md   # Common .env setups (OpenAI default, local only, etc.)
 │   ├── METRICS.md                  # Prometheus metrics, scrape config, example queries
@@ -106,6 +110,6 @@ policy-mesh/
 - Keep CI workflow logic in `.github/workflows/` and expand checks task-by-task.
 
 ## Guardrails for Structure Changes
-- Do not add RAG/vector, multi-tenant auth, or extra providers unless in scope (see `.context/SCOPE.md`).
+- Do not add RAG/vector, multi-tenant auth, or extra providers beyond local + OpenAI + Anthropic unless in scope (see `.context/SCOPE.md`).
 - Do not introduce new top-level modules/endpoints unless required by an active task.
 - Prefer minimal, reviewable additions over broad abstractions.

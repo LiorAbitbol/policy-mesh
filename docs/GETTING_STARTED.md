@@ -267,10 +267,10 @@ Then use the same verification steps (health, routes, chat, audit, UI at http://
 
 | Goal | Main steps |
 |------|------------|
-| **Full app in Docker (OpenAI + audit)** | `.env` with `PUBLIC_LLM_API_KEY`, `DEFAULT_PROVIDER=openai` (or unset). Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
-| **Full app in Docker (Ollama + audit)** | `.env` with `DEFAULT_PROVIDER=local`. Postgres → migrations → `docker compose up -d app` and `docker compose up -d ollama` + `ollama pull llama2` → verify. |
+| **Full app in Docker (public LLM + audit)** | `.env` with `POLICY_FILE`, `PUBLIC_LLM_API_KEY`. Policy file: `cost.default_provider: "public"`. Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
+| **Full app in Docker (Ollama + audit)** | `.env` with `POLICY_FILE`. Policy file: `cost.default_provider: "local"`. Postgres → migrations → `docker compose up -d app` and `docker compose up -d ollama` + `ollama pull llama2` → verify. |
 | **Tests only** | `pip install -e ".[dev]"` then `pytest tests/ -v`. |
-| **App on host** | Postgres + migrations + `DATABASE_URL` and provider vars in env → `uvicorn app.main:app --reload`. |
+| **App on host** | Postgres + migrations + `DATABASE_URL`, `POLICY_FILE`, and provider vars in env → `uvicorn app.main:app --reload`. |
 
 ---
 
@@ -278,7 +278,7 @@ Then use the same verification steps (health, routes, chat, audit, UI at http://
 
 | Problem | What to do |
 |--------|------------|
-| **`/v1/chat` returns 500 or "Internal Server Error"** | Check app logs: `docker compose logs app`. Typical causes: (1) **Database** — Postgres not running or app can’t reach it. Ensure you ran Step 3 and 4; the app uses host `postgres` automatically. (2) **Public LLM** — Missing or invalid `PUBLIC_LLM_API_KEY` when default is openai. (3) **Ollama** — If using local, start Ollama and pull a model; use `LOCAL_LLM_URL=http://ollama:11434` in Docker (already set in `docker-compose.yml`). |
+| **`/v1/chat` returns 500 or "Internal Server Error"** | Check app logs: `docker compose logs app`. Typical causes: (1) **Database** — Postgres not running or app can’t reach it. Ensure you ran Step 3 and 4; the app uses host `postgres` automatically. (2) **Public LLM** — Missing or invalid `PUBLIC_LLM_API_KEY` when default is **public** (and PUBLIC_LLM_URL points to OpenAI or Anthropic). (3) **Ollama** — If using local, start Ollama and pull a model; use `LOCAL_LLM_URL=http://ollama:11434` in Docker (already set in `docker-compose.yml`). |
 | **"connection to server at 127.0.0.1 port 5432 failed"** | The app container is trying to use `localhost` for Postgres. Ensure `docker-compose.yml` has the `DATABASE_URL` override for the app service (host `postgres`). Your `.env` should keep `localhost` for migrations only. |
 | **Audit not found (404)** | Audit is enabled only when `DATABASE_URL` is set and migrations have been run. Confirm `alembic upgrade head` succeeded and the app container has the overridden `DATABASE_URL` (with host `postgres`). |
 | **"env file .env not found"** | Run `cp .env.example .env` in the repo root. If you use a different path, adjust `env_file` under the `app` service in `docker-compose.yml`. |
