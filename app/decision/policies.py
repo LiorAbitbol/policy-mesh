@@ -16,7 +16,7 @@ def cost_prefer_local(
     prompt_length: int,
     cost_max_prompt_length_for_local: int,
     cost_max_usd_for_local: float | None = None,
-    openai_input_usd_per_1k_tokens: float | None = None,
+    llm_input_usd_per_1k_tokens: float | None = None,
     cost_chars_per_token: int = 4,
 ) -> bool:
     """
@@ -24,7 +24,7 @@ def cost_prefer_local(
 
     When both USD config values are set, use an approximate USD estimate:
     - tokens ~= prompt_length / cost_chars_per_token
-    - cost_usd ~= (tokens / 1000) * openai_input_usd_per_1k_tokens
+    - cost_usd ~= (tokens / 1000) * llm_input_usd_per_1k_tokens
     Prefer local when cost_usd <= cost_max_usd_for_local.
 
     Otherwise, fall back to the legacy character-length threshold:
@@ -37,14 +37,14 @@ def cost_prefer_local(
     # USD-mode: enabled only when both threshold and price are configured.
     if (
         cost_max_usd_for_local is not None
-        and openai_input_usd_per_1k_tokens is not None
+        and llm_input_usd_per_1k_tokens is not None
     ):
         if cost_chars_per_token <= 0:
             cost_chars_per_token = 4
         tokens_estimate = prompt_length / float(cost_chars_per_token)
         if tokens_estimate < 0:
             tokens_estimate = 0.0
-        cost_usd = (tokens_estimate / 1000.0) * openai_input_usd_per_1k_tokens
+        cost_usd = (tokens_estimate / 1000.0) * llm_input_usd_per_1k_tokens
         return cost_usd <= cost_max_usd_for_local
 
     # Legacy character-threshold mode.

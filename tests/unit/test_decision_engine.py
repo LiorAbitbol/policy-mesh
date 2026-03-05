@@ -16,7 +16,7 @@ def _config(
     max_length: int = 1000,
     default_provider: str = "openai",
     cost_max_usd_for_local: float | None = None,
-    openai_input_usd_per_1k_tokens: float | None = None,
+    llm_input_usd_per_1k_tokens: float | None = None,
     cost_chars_per_token: int = 4,
 ) -> PolicyConfig:
     return PolicyConfig(
@@ -24,7 +24,7 @@ def _config(
         cost_max_prompt_length_for_local=max_length,
         default_provider=default_provider,
         cost_max_usd_for_local=cost_max_usd_for_local,
-        openai_input_usd_per_1k_tokens=openai_input_usd_per_1k_tokens,
+        llm_input_usd_per_1k_tokens=llm_input_usd_per_1k_tokens,
         cost_chars_per_token=cost_chars_per_token,
     )
 
@@ -109,12 +109,12 @@ def test_every_decision_has_provider_and_reason_codes() -> None:
 
 def test_cost_usd_mode_under_threshold_returns_local() -> None:
     """USD-mode: estimated cost under threshold → provider=local, COST_PREFER_LOCAL."""
-    # USD-mode active when both cost_max_usd_for_local and openai_input_usd_per_1k_tokens are set.
+    # USD-mode active when both cost_max_usd_for_local and llm_input_usd_per_1k_tokens are set.
     config = _config(
         keywords=(),
         max_length=10_000,
         cost_max_usd_for_local=0.05,
-        openai_input_usd_per_1k_tokens=0.02,
+        llm_input_usd_per_1k_tokens=0.02,
         cost_chars_per_token=4,
     )
     # prompt_length=4_000 chars → tokens≈1_000 → cost≈(1000/1000)*0.02 = $0.02 < $0.05
@@ -130,7 +130,7 @@ def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
         max_length=10_000,
         default_provider="openai",
         cost_max_usd_for_local=0.05,
-        openai_input_usd_per_1k_tokens=0.02,
+        llm_input_usd_per_1k_tokens=0.02,
         cost_chars_per_token=4,
     )
     # prompt_length=12_000 chars → tokens≈3_000 → cost≈(3000/1000)*0.02 = $0.06 > $0.05

@@ -14,7 +14,7 @@ This page gives copy-paste `.env` snippets for common setups. For how each varia
 
 ```env
 DEFAULT_PROVIDER=openai
-OPENAI_API_KEY=sk-your-key-here
+PUBLIC_LLM_API_KEY=sk-your-key-here
 SENSITIVITY_KEYWORDS=internal,confidential,secret
 ```
 
@@ -32,10 +32,10 @@ Ensure Ollama is running and a model is pulled if you want those sensitive reque
 
 ```env
 DEFAULT_PROVIDER=local
-OLLAMA_BASE_URL=http://localhost:11434
+LOCAL_LLM_URL=http://localhost:11434
 ```
 
-No `OPENAI_API_KEY` needed. Start Ollama and pull a model (e.g. `ollama pull llama2`). In Docker Compose, use `OLLAMA_BASE_URL=http://ollama:11434` (set in `docker-compose.yml` for the app service).
+No `PUBLIC_LLM_API_KEY` needed. Start Ollama and pull a model (e.g. `ollama pull llama2`). In Docker Compose, use `LOCAL_LLM_URL=http://ollama:11434` (set in `docker-compose.yml` for the app service).
 
 ---
 
@@ -43,15 +43,15 @@ No `OPENAI_API_KEY` needed. Start Ollama and pull a model (e.g. `ollama pull lla
 
 **Goal:** Prefer local when the estimated OpenAI input cost is below a cap (e.g. $0.10); otherwise send to OpenAI.
 
-**Behavior:** When both `COST_MAX_USD_FOR_LOCAL` and `OPENAI_INPUT_USD_PER_1K_TOKENS` are set, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
+**Behavior:** When both `COST_MAX_USD_FOR_LOCAL` and `LLM_INPUT_USD_PER_1K_TOKENS` are set, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
 
 **Add or set in `.env`:**
 
 ```env
 DEFAULT_PROVIDER=openai
-OPENAI_API_KEY=sk-your-key-here
+PUBLIC_LLM_API_KEY=sk-your-key-here
 COST_MAX_USD_FOR_LOCAL=0.10
-OPENAI_INPUT_USD_PER_1K_TOKENS=0.0015
+LLM_INPUT_USD_PER_1K_TOKENS=0.0015
 COST_CHARS_PER_TOKEN=4
 ```
 
@@ -59,7 +59,7 @@ To **never** prefer local by cost (always use default unless sensitivity matches
 
 ```env
 COST_MAX_USD_FOR_LOCAL=0
-OPENAI_INPUT_USD_PER_1K_TOKENS=0.0015
+LLM_INPUT_USD_PER_1K_TOKENS=0.0015
 ```
 
 ---

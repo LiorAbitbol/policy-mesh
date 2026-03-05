@@ -27,17 +27,17 @@ class RoutesResponse(BaseModel):
         ...,
         description=(
             "Whether USD-based cost gate is active "
-            "(True when both COST_MAX_USD_FOR_LOCAL and OPENAI_INPUT_USD_PER_1K_TOKENS are configured)."
+            "(True when both COST_MAX_USD_FOR_LOCAL and LLM_INPUT_USD_PER_1K_TOKENS are configured)."
         ),
     )
     cost_max_usd_for_local: float | None = Field(
         None,
-        description="Maximum estimated OpenAI input cost in USD for which local is preferred (approximate).",
+        description="Maximum estimated public LLM input cost in USD for which local is preferred (approximate).",
         ge=0,
     )
-    openai_input_usd_per_1k_tokens: float | None = Field(
+    llm_input_usd_per_1k_tokens: float | None = Field(
         None,
-        description="Configured OpenAI input price in USD per 1K tokens (approximate; input-only).",
+        description="Configured LLM input price in USD per 1K tokens (LLM_INPUT_USD_PER_1K_TOKENS; approximate; input-only).",
         ge=0,
     )
     cost_chars_per_token: int = Field(

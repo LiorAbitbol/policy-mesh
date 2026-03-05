@@ -17,7 +17,7 @@ def get_routes() -> RoutesResponse:
     config = get_policy_config()
     usd_cost_mode_active = (
         config.cost_max_usd_for_local is not None
-        and config.openai_input_usd_per_1k_tokens is not None
+        and config.llm_input_usd_per_1k_tokens is not None
     )
     return RoutesResponse(
         rule_order=list(ROUTE_RULE_ORDER),
@@ -26,6 +26,6 @@ def get_routes() -> RoutesResponse:
         default_provider=config.default_provider,
         usd_cost_mode_active=usd_cost_mode_active,
         cost_max_usd_for_local=config.cost_max_usd_for_local,
-        openai_input_usd_per_1k_tokens=config.openai_input_usd_per_1k_tokens,
+        llm_input_usd_per_1k_tokens=config.llm_input_usd_per_1k_tokens,
         cost_chars_per_token=config.cost_chars_per_token,
     )

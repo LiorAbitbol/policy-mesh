@@ -2,7 +2,7 @@
 
 import httpx
 
-from app.core.config import get_ollama_base_url, get_provider_timeout_seconds
+from app.core.config import get_local_llm_api_key, get_local_llm_url, get_provider_timeout_seconds
 from app.providers.base import (
     FAILURE_AUTH_ERROR,
     FAILURE_CLIENT_ERROR,
@@ -26,23 +26,29 @@ def chat(
     messages: [{"role": "user"|"assistant"|"system", "content": "..."}]
     model: e.g. "llama2"; default "llama2" if omitted.
     """
-    url = base_url or get_ollama_base_url()
+    url = base_url or get_local_llm_url()
     timeout_sec = timeout if timeout is not None else get_provider_timeout_seconds()
     model_name = model or "llama2"
     payload = {"model": model_name, "messages": messages, "stream": False}
+    api_key = get_local_llm_api_key()
 
     if client is not None:
-        return _request(client, f"{url}/api/chat", payload, timeout_sec)
+        return _request(client, f"{url}/api/chat", payload, timeout_sec, api_key)
 
     with httpx.Client(timeout=timeout_sec) as c:
-        return _request(c, f"{url}/api/chat", payload, timeout_sec)
+        return _request(c, f"{url}/api/chat", payload, timeout_sec, api_key)
 
 
 def _request(
-    client: httpx.Client, full_url: str, payload: dict, timeout_sec: float
+    client: httpx.Client,
+    full_url: str,
+    payload: dict,
+    timeout_sec: float,
+    api_key: str | None = None,
 ) -> ChatResult:
+    headers = {"Authorization": f"Bearer {api_key}"} if api_key else None
     try:
-        resp = client.post(full_url, json=payload, timeout=timeout_sec)
+        resp = client.post(full_url, json=payload, headers=headers, timeout=timeout_sec)
     except httpx.TimeoutException:
         return {"success": False, "failure_category": FAILURE_TIMEOUT, "message": "Request timed out"}
     except httpx.RequestError as e:

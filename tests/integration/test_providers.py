@@ -49,6 +49,7 @@ def test_ollama_chat_4xx_returns_client_error() -> None:
         "http://fake/api/chat",
         {"model": "llama2", "messages": []},
         10.0,
+        None,
     )
 
     assert result["success"] is False
@@ -66,6 +67,7 @@ def test_ollama_chat_5xx_returns_server_error() -> None:
         "http://fake/api/chat",
         {"model": "llama2", "messages": []},
         10.0,
+        None,
     )
 
     assert result["success"] is False
@@ -82,6 +84,7 @@ def test_ollama_chat_timeout_returns_timeout_category() -> None:
         "http://fake/api/chat",
         {"model": "llama2", "messages": []},
         10.0,
+        None,
     )
 
     assert result["success"] is False
@@ -119,7 +122,7 @@ def test_openai_chat_success_returns_content() -> None:
 
 def test_openai_chat_no_api_key_returns_auth_error() -> None:
     """OpenAI: no API key → failure_category auth_error (no HTTP call)."""
-    with patch.object(openai_module, "get_openai_api_key", return_value=None):
+    with patch.object(openai_module, "get_public_llm_api_key", return_value=None):
         result = openai_module.chat(
             [{"role": "user", "content": "Hi"}],
             api_key=None,
@@ -191,6 +194,7 @@ def test_both_providers_share_interface() -> None:
         "http://f/api/chat",
         {"model": "x", "messages": []},
         1.0,
+        None,
     )
     openai_ok = openai_module._request(
         MagicMock(post=MagicMock(return_value=httpx.Response(

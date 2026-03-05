@@ -3,8 +3,8 @@
 import httpx
 
 from app.core.config import (
-    get_openai_api_key,
-    get_openai_base_url,
+    get_public_llm_api_key,
+    get_public_llm_url,
     get_provider_timeout_seconds,
 )
 from app.providers.base import (
@@ -16,9 +16,6 @@ from app.providers.base import (
     ChatResult,
 )
 
-OPENAI_DEFAULT_BASE = "https://api.openai.com"
-
-
 def chat(
     messages: list[dict[str, str]],
     model: str | None = None,
@@ -29,14 +26,14 @@ def chat(
     client: httpx.Client | None = None,
 ) -> ChatResult:
     """
-    Send chat completions to OpenAI (or OPENAI_BASE_URL). Uses config if not provided.
+    Send chat completions to public LLM (PUBLIC_LLM_URL; provider inferred from URL). Uses config if not provided.
     messages: [{"role": "user"|"assistant"|"system", "content": "..."}]
     model: e.g. "gpt-4"; default "gpt-3.5-turbo" if omitted.
     """
-    key = api_key or get_openai_api_key()
+    key = api_key or get_public_llm_api_key()
     if not key:
-        return {"success": False, "failure_category": FAILURE_AUTH_ERROR, "message": "OPENAI_API_KEY not set"}
-    url_base = (base_url or get_openai_base_url() or OPENAI_DEFAULT_BASE).rstrip("/")
+        return {"success": False, "failure_category": FAILURE_AUTH_ERROR, "message": "PUBLIC_LLM_API_KEY not set"}
+    url_base = (base_url or get_public_llm_url()).rstrip("/")
     timeout_sec = timeout if timeout is not None else get_provider_timeout_seconds()
     model_name = model or "gpt-3.5-turbo"
     payload = {"model": model_name, "messages": messages}

@@ -27,7 +27,7 @@ class PolicyConfig:
     cost_max_prompt_length_for_local: int
     default_provider: str  # "local" | "openai"
     cost_max_usd_for_local: float | None
-    openai_input_usd_per_1k_tokens: float | None
+    llm_input_usd_per_1k_tokens: float | None
     cost_chars_per_token: int
 
 
@@ -39,7 +39,7 @@ def get_policy_config() -> PolicyConfig:
     - cost_max_prompt_length_for_local: 1000
     - default_provider: "openai"
     - cost_max_usd_for_local: None (disabled)
-    - openai_input_usd_per_1k_tokens: None (disabled)
+    - llm_input_usd_per_1k_tokens: None (disabled)
     - cost_chars_per_token: 4
     """
     raw_kw = os.getenv("SENSITIVITY_KEYWORDS", "")
@@ -79,8 +79,8 @@ def get_policy_config() -> PolicyConfig:
         return value if value >= 0.0 else None
 
     cost_max_usd_for_local = _parse_cost_max_usd("COST_MAX_USD_FOR_LOCAL")
-    openai_input_usd_per_1k_tokens = _parse_positive_float(
-        "OPENAI_INPUT_USD_PER_1K_TOKENS"
+    llm_input_usd_per_1k_tokens = _parse_positive_float(
+        "LLM_INPUT_USD_PER_1K_TOKENS"
     )
 
     raw_chars_per_token = os.getenv("COST_CHARS_PER_TOKEN", "4").strip()
@@ -96,26 +96,31 @@ def get_policy_config() -> PolicyConfig:
         cost_max_prompt_length_for_local=cost_max_prompt_length_for_local,
         default_provider=default_provider,
         cost_max_usd_for_local=cost_max_usd_for_local,
-        openai_input_usd_per_1k_tokens=openai_input_usd_per_1k_tokens,
+        llm_input_usd_per_1k_tokens=llm_input_usd_per_1k_tokens,
         cost_chars_per_token=cost_chars_per_token,
     )
 
 
-def get_ollama_base_url() -> str:
-    """Ollama API base URL (default http://localhost:11434). From env OLLAMA_BASE_URL."""
-    url = (os.getenv("OLLAMA_BASE_URL") or "http://localhost:11434").strip()
+def get_local_llm_url() -> str:
+    """Local LLM base URL (default http://localhost:11434). From env LOCAL_LLM_URL."""
+    url = (os.getenv("LOCAL_LLM_URL") or "http://localhost:11434").strip()
     return url.rstrip("/")
 
 
-def get_openai_api_key() -> str | None:
-    """OpenAI API key from env. No default; no secrets in code."""
-    return os.getenv("OPENAI_API_KEY") or None
+def get_local_llm_api_key() -> str | None:
+    """Optional API key for local LLM (e.g. Ollama with auth). From env LOCAL_LLM_API_KEY."""
+    return os.getenv("LOCAL_LLM_API_KEY") or None
 
 
-def get_openai_base_url() -> str | None:
-    """Optional OpenAI API base URL override (e.g. for proxy). From env OPENAI_BASE_URL."""
-    url = (os.getenv("OPENAI_BASE_URL") or "").strip().rstrip("/")
-    return url or None
+def get_public_llm_url() -> str:
+    """Public/cloud LLM base URL (default https://api.openai.com). From env PUBLIC_LLM_URL."""
+    url = (os.getenv("PUBLIC_LLM_URL") or "https://api.openai.com").strip()
+    return url.rstrip("/")
+
+
+def get_public_llm_api_key() -> str | None:
+    """Public LLM API key from env. No default; no secrets in code."""
+    return os.getenv("PUBLIC_LLM_API_KEY") or None
 
 
 def get_provider_timeout_seconds() -> float:

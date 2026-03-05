@@ -36,7 +36,7 @@ The response always includes `provider` and `reason_codes` so you can see why a 
 
 The engine supports two modes. **Only one is active at a time:**
 
-- **USD mode** — Used when both `COST_MAX_USD_FOR_LOCAL` and `OPENAI_INPUT_USD_PER_1K_TOKENS` are set. Compares an estimated OpenAI cost to the threshold.
+- **USD mode** — Used when both `COST_MAX_USD_FOR_LOCAL` and `LLM_INPUT_USD_PER_1K_TOKENS` are set. Compares an estimated public LLM cost to the threshold.
 - **Length mode** — Used when USD mode is not configured. Compares prompt length (characters) to a maximum length.
 
 ### USD mode (optional)
@@ -46,19 +46,19 @@ When both of these are set, the engine uses USD estimation and **ignores** the l
 | Variable | Type | Default | Effect |
 |----------|------|---------|--------|
 | `COST_MAX_USD_FOR_LOCAL` | Float, ≥ 0 | *(not set)* | Prefer local when estimated prompt cost (USD) ≤ this value. Use `0` or `0.0` to never prefer local by cost (all prompts go to default unless sensitivity matches). |
-| `OPENAI_INPUT_USD_PER_1K_TOKENS` | Float, > 0 | *(not set)* | Price in USD per 1k input tokens (e.g. `0.0015`). Used only when `COST_MAX_USD_FOR_LOCAL` is set. |
+| `LLM_INPUT_USD_PER_1K_TOKENS` | Float, > 0 | *(not set)* | Price in USD per 1k input tokens (e.g. `0.0015`). Used only when `COST_MAX_USD_FOR_LOCAL` is set. |
 | `COST_CHARS_PER_TOKEN` | Integer, > 0 | `4` | Heuristic: tokens ≈ prompt length (chars) ÷ this value. Used for the USD estimate. |
 
 **Formula:**
 `tokens ≈ prompt_length / COST_CHARS_PER_TOKEN`
-`cost_usd ≈ (tokens / 1000) * OPENAI_INPUT_USD_PER_1K_TOKENS`
+`cost_usd ≈ (tokens / 1000) * LLM_INPUT_USD_PER_1K_TOKENS`
 → Prefer local when `cost_usd ≤ COST_MAX_USD_FOR_LOCAL`.
 
 **Note:** This is an approximation. Actual tokenization and pricing may differ.
 
 ### Length mode (fallback)
 
-When USD mode is **not** configured (either `COST_MAX_USD_FOR_LOCAL` or `OPENAI_INPUT_USD_PER_1K_TOKENS` is missing/invalid), the cost rule uses character length only:
+When USD mode is **not** configured (either `COST_MAX_USD_FOR_LOCAL` or `LLM_INPUT_USD_PER_1K_TOKENS` is missing/invalid), the cost rule uses character length only:
 
 | Variable | Type | Default | Effect |
 |----------|------|---------|--------|
@@ -90,8 +90,8 @@ When USD mode is **not** configured (either `COST_MAX_USD_FOR_LOCAL` or `OPENAI_
 | Variable | Used by | When it applies |
 |----------|---------|------------------|
 | `SENSITIVITY_KEYWORDS` | Sensitivity rule | Always (empty = rule skipped). |
-| `COST_MAX_USD_FOR_LOCAL` | Cost rule (USD mode) | Only when also set with `OPENAI_INPUT_USD_PER_1K_TOKENS`. |
-| `OPENAI_INPUT_USD_PER_1K_TOKENS` | Cost rule (USD mode) | Only when also set with `COST_MAX_USD_FOR_LOCAL`. |
+| `COST_MAX_USD_FOR_LOCAL` | Cost rule (USD mode) | Only when also set with `LLM_INPUT_USD_PER_1K_TOKENS`. |
+| `LLM_INPUT_USD_PER_1K_TOKENS` | Cost rule (USD mode) | Only when also set with `COST_MAX_USD_FOR_LOCAL`. |
 | `COST_CHARS_PER_TOKEN` | Cost rule (USD mode) | Only when USD mode is active. |
 | `COST_MAX_PROMPT_LENGTH_FOR_LOCAL` | Cost rule (length mode) | Only when USD mode is **not** active. |
 | `DEFAULT_PROVIDER` | Default step | When no sensitivity or cost match. |

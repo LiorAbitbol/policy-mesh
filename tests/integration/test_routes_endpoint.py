@@ -57,6 +57,6 @@ def test_get_routes_does_not_expose_secrets() -> None:
         "default_provider",
         "usd_cost_mode_active",
         "cost_max_usd_for_local",
-        "openai_input_usd_per_1k_tokens",
+        "llm_input_usd_per_1k_tokens",
         "cost_chars_per_token",
     }

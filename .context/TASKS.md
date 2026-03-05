@@ -18,9 +18,9 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 
 ## Current Status Snapshot
 - Last Updated: 2026-03-05
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301` (M3: env renames + URL-based provider config)
 - In Progress: none
-- Next: T-301
+- Next: T-302
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -41,7 +41,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 | 14 | T-202 | V2: Add GET `/v1/routes` (effective policy view) | `done` | `planner` | `.context/private/tasks/T-202.md` |
 | 15 | T-204 | V2: Easy-mode USD cost threshold routing | `done` | `planner` | `.context/private/tasks/T-204.md` |
 | 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `done` | `planner` | `.context/private/tasks/T-203.md` |
-| 17 | T-301 | M3: Env renames + URL-based provider config | `todo` | `planner` | `.context/private/tasks/T-301.md` |
+| 17 | T-301 | M3: Env renames + URL-based provider config | `done` | `planner` | `.context/private/tasks/T-301.md` |
 | 18 | T-302 | M3: Anthropic provider adapter + orchestrator wiring | `todo` | `planner` | `.context/private/tasks/T-302.md` |
 | 19 | T-303 | M3: External JSON policy file (sensitivity + cost, extensible) | `todo` | `planner` | `.context/private/tasks/T-303.md` |
 | 20 | T-304 | M3: Future LLM capability policy (docs only) | `todo` | `planner` | `.context/private/tasks/T-304.md` |
@@ -129,7 +129,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
   - Private Task Doc: `.context/private/tasks/T-204.md`
   - Acceptance: Cost routing can use a configurable USD estimate (chars→tokens heuristic) with env-configured $/1k; falls back to character threshold when unset.
 - T-301: M3: Scope and config model — env renames + URL-based provider config
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-301.md`
   - Acceptance: Env uses LOCAL_LLM_URL, LOCAL_LLM_API_KEY (optional), PUBLIC_LLM_URL, PUBLIC_LLM_API_KEY, LLM_INPUT_USD_PER_1K_TOKENS; provider inferred from PUBLIC_LLM_URL; no backward compat.

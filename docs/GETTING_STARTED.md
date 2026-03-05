@@ -10,10 +10,10 @@ This guide focuses on **testing the full app with Docker**. You can run the API,
 |-------------|---------|
 | **Docker** and **Docker Compose** | Run Postgres, the app, and optionally Ollama in containers. [Install Docker](https://docs.docker.com/get-docker/). |
 | **Python 3.11+** (on your host) | Run database migrations and the test suite. Not required for running the app in Docker. |
-| **OpenAI API key** (optional) | Use OpenAI as the default provider. Get one at [platform.openai.com](https://platform.openai.com/api-keys). |
+| **Public LLM API key** (optional) | Use a cloud provider (e.g. OpenAI) as default. Set `PUBLIC_LLM_API_KEY`; get OpenAI keys at [platform.openai.com](https://platform.openai.com/api-keys). |
 | **Ollama** (optional) | Use a local model as default or fallback. Run via Docker in this guide; no separate install. |
 
-You need **at least one** of: OpenAI API key or Ollama (with a model pulled). The app will not respond to chat until one provider is configured.
+You need **at least one** of: public LLM (e.g. set `PUBLIC_LLM_API_KEY` for OpenAI) or local LLM (Ollama with a model pulled). The app will not respond to chat until one provider is configured.
 
 ---
 
@@ -63,11 +63,15 @@ The default values in `.env.example` match the Postgres container. If you didn�
 
 #### Required for chat: choose a default provider
 
-**Option A — Use OpenAI as default**
+**Option A — Use OpenAI (or other public LLM) as default**
 
-- Set your API key (required):
+- Set your public LLM API key (required):
   ```env
-  OPENAI_API_KEY=sk-your-actual-key-here
+  PUBLIC_LLM_API_KEY=sk-your-actual-key-here
+  ```
+- Optionally set the base URL (defaults to `https://api.openai.com` if unset):
+  ```env
+  PUBLIC_LLM_URL=https://api.openai.com
   ```
 - Leave `DEFAULT_PROVIDER` unset, or set:
   ```env
@@ -80,7 +84,7 @@ The default values in `.env.example` match the Postgres container. If you didn�
   ```env
   DEFAULT_PROVIDER=local
   ```
-- Do **not** set `OPENAI_API_KEY` unless you also want to allow cloud fallback.
+- Do **not** set `PUBLIC_LLM_API_KEY` unless you also want to allow cloud fallback.
 - In Step 5 you will start Ollama and pull a model.
 
 **Optional:** See `.env.example` for routing (e.g. `SENSITIVITY_KEYWORDS`), cost rules, and timeouts.
@@ -248,7 +252,7 @@ If you prefer to run the app process on your machine instead of in Docker:
 2. In `.env`, set `DATABASE_URL` with host `localhost` (and correct user/password/db).
 3. Run migrations: `export DATABASE_URL=... && alembic upgrade head`.
 4. Start the app: `uvicorn app.main:app --reload` (with `DATABASE_URL` and provider vars in the environment, e.g. `set -a && source .env && set +a` or export them manually).
-5. For Ollama, use `OLLAMA_BASE_URL=http://localhost:11434` if Ollama runs on the host; for Docker Ollama, use `http://localhost:11434` from the host as well.
+5. For Ollama, use `LOCAL_LLM_URL=http://localhost:11434` if Ollama runs on the host; for Docker Ollama, use `http://localhost:11434` from the host as well.
 
 Then use the same verification steps (health, routes, chat, audit, UI at http://127.0.0.1:8000/).
 
@@ -258,7 +262,7 @@ Then use the same verification steps (health, routes, chat, audit, UI at http://
 
 | Goal | Main steps |
 |------|------------|
-| **Full app in Docker (OpenAI + audit)** | `.env` with `OPENAI_API_KEY`, `DEFAULT_PROVIDER=openai` (or unset). Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
+| **Full app in Docker (OpenAI + audit)** | `.env` with `PUBLIC_LLM_API_KEY`, `DEFAULT_PROVIDER=openai` (or unset). Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
 | **Full app in Docker (Ollama + audit)** | `.env` with `DEFAULT_PROVIDER=local`. Postgres → migrations → `docker compose up -d app` and `docker compose up -d ollama` + `ollama pull llama2` → verify. |
 | **Tests only** | `pip install -e ".[dev]"` then `pytest tests/ -v`. |
 | **App on host** | Postgres + migrations + `DATABASE_URL` and provider vars in env → `uvicorn app.main:app --reload`. |
@@ -269,7 +273,7 @@ Then use the same verification steps (health, routes, chat, audit, UI at http://
 
 | Problem | What to do |
 |--------|------------|
-| **`/v1/chat` returns 500 or "Internal Server Error"** | Check app logs: `docker compose logs app`. Typical causes: (1) **Database** — Postgres not running or app can’t reach it. Ensure you ran Step 3 and 4; the app uses host `postgres` automatically. (2) **OpenAI** — Missing or invalid `OPENAI_API_KEY` when default is openai. (3) **Ollama** — If using local, start Ollama and pull a model; use `OLLAMA_BASE_URL=http://ollama:11434` in Docker (already set in `docker-compose.yml`). |
+| **`/v1/chat` returns 500 or "Internal Server Error"** | Check app logs: `docker compose logs app`. Typical causes: (1) **Database** — Postgres not running or app can’t reach it. Ensure you ran Step 3 and 4; the app uses host `postgres` automatically. (2) **Public LLM** — Missing or invalid `PUBLIC_LLM_API_KEY` when default is openai. (3) **Ollama** — If using local, start Ollama and pull a model; use `LOCAL_LLM_URL=http://ollama:11434` in Docker (already set in `docker-compose.yml`). |
 | **"connection to server at 127.0.0.1 port 5432 failed"** | The app container is trying to use `localhost` for Postgres. Ensure `docker-compose.yml` has the `DATABASE_URL` override for the app service (host `postgres`). Your `.env` should keep `localhost` for migrations only. |
 | **Audit not found (404)** | Audit is enabled only when `DATABASE_URL` is set and migrations have been run. Confirm `alembic upgrade head` succeeded and the app container has the overridden `DATABASE_URL` (with host `postgres`). |
 | **"env file .env not found"** | Run `cp .env.example .env` in the repo root. If you use a different path, adjust `env_file` under the `app` service in `docker-compose.yml`. |

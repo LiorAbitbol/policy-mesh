@@ -42,4 +42,4 @@ Routing is determined by the [engine rules](ENGINE_RULES.md). Use **sensitivity 
 | **Disable audit** | Set `AUDIT_ENABLED=false` in `.env`. No audit events are written. |
 | **Run without a database** | Do not set `DATABASE_URL`, or set `AUDIT_ENABLED=false` if you have a DB for other reasons. |
 
-Secrets (e.g. `OPENAI_API_KEY`) are read from the environment only; they are not logged or exposed in API responses. The `/v1/routes` endpoint returns the effective routing policy but never exposes keyword values or secrets.
+Secrets (e.g. `PUBLIC_LLM_API_KEY`) are read from the environment only; they are not logged or exposed in API responses. The `/v1/routes` endpoint returns the effective routing policy but never exposes keyword values or secrets.
