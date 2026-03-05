@@ -85,6 +85,14 @@ def test_default_provider_configurable() -> None:
     assert result["reason_codes"] == [DEFAULT_OPENAI]
 
 
+def test_default_provider_anthropic_returns_anthropic() -> None:
+    """Default provider can be set to anthropic; decision returns provider=anthropic."""
+    config = _config(keywords=(), max_length=10, default_provider="anthropic")
+    result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
+    assert result["provider"] == "anthropic"
+    assert result["reason_codes"] == [DEFAULT_OPENAI]
+
+
 def test_determinism_same_input_same_decision() -> None:
     """Same prompt_text, prompt_length, and config → same decision every time."""
     config = _config(keywords=("x",), max_length=200)
@@ -102,7 +110,7 @@ def test_every_decision_has_provider_and_reason_codes() -> None:
         result = decide(prompt_text=prompt_text, prompt_length=prompt_length, config=config)
         assert "provider" in result
         assert "reason_codes" in result
-        assert result["provider"] in ("local", "openai")
+        assert result["provider"] in ("local", "openai", "anthropic")
         assert isinstance(result["reason_codes"], list)
         assert len(result["reason_codes"]) >= 1
 

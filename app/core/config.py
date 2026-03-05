@@ -25,7 +25,7 @@ class PolicyConfig:
 
     sensitivity_keywords: tuple[str, ...]
     cost_max_prompt_length_for_local: int
-    default_provider: str  # "local" | "openai"
+    default_provider: str  # "local" | "openai" | "anthropic"
     cost_max_usd_for_local: float | None
     llm_input_usd_per_1k_tokens: float | None
     cost_chars_per_token: int
@@ -52,7 +52,7 @@ def get_policy_config() -> PolicyConfig:
     except ValueError:
         cost_max_prompt_length_for_local = 1000
     default_provider = (os.getenv("DEFAULT_PROVIDER", "openai") or "openai").strip().lower()
-    if default_provider not in ("local", "openai"):
+    if default_provider not in ("local", "openai", "anthropic"):
         default_provider = "openai"
 
     # Optional easy-mode USD cost gate (T-204). When either value is missing/invalid,
@@ -121,6 +121,17 @@ def get_public_llm_url() -> str:
 def get_public_llm_api_key() -> str | None:
     """Public LLM API key from env. No default; no secrets in code."""
     return os.getenv("PUBLIC_LLM_API_KEY") or None
+
+
+def get_public_provider_from_url() -> str:
+    """
+    Infer public provider from PUBLIC_LLM_URL (e.g. host contains anthropic → anthropic).
+    Returns "anthropic" if URL host contains "anthropic", else "openai".
+    """
+    url = get_public_llm_url().lower()
+    if "anthropic" in url:
+        return "anthropic"
+    return "openai"
 
 
 def get_provider_timeout_seconds() -> float:

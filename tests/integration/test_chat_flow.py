@@ -50,6 +50,38 @@ def test_chat_local_happy_path_returns_provider_reason_codes_content() -> None:
     assert ctx.failure_category is None
 
 
+def test_chat_anthropic_happy_path_returns_provider_reason_codes_content() -> None:
+    """Route behavior (anthropic): mocked decide → anthropic, anthropic.chat success → 200, provider, reason_codes, content; audit written."""
+    with (
+        patch("app.services.chat_orchestrator.decide") as mock_decide,
+        patch("app.services.chat_orchestrator.anthropic_provider") as mock_anthropic,
+        patch("app.services.chat_orchestrator.persist_audit_event") as mock_persist,
+    ):
+        mock_decide.return_value = {"provider": "anthropic", "reason_codes": ["default_openai"]}
+        mock_anthropic.chat.return_value = {"success": True, "content": "Hello from Claude"}
+
+        client = TestClient(app)
+        response = client.post(
+            "/v1/chat",
+            json={"messages": [{"role": "user", "content": "Hi"}]},
+        )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
+    assert response.headers.get("X-Request-Id") == data["request_id"]
+    assert data["provider"] == "anthropic"
+    assert data["reason_codes"] == ["default_openai"]
+    assert data["content"] == "Hello from Claude"
+    assert data.get("error") is None
+    mock_decide.assert_called_once()
+    mock_anthropic.chat.assert_called_once()
+    mock_persist.assert_called_once()
+    ctx: AuditRequestContext = mock_persist.call_args[0][0]
+    assert "provider=anthropic" in ctx.decision
+    assert ctx.status == "success"
+
+
 def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
     """Route behavior (openai): mocked decide → openai, openai.chat success → 200, provider, reason_codes, content; audit written with status=success."""
     with (

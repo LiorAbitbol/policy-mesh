@@ -3,7 +3,7 @@
 from fastapi import APIRouter
 
 from app.api.schemas.routes import ROUTE_RULE_ORDER, RoutesResponse
-from app.core.config import get_policy_config
+from app.core.config import get_policy_config, get_public_provider_from_url
 
 router = APIRouter()
 
@@ -28,4 +28,5 @@ def get_routes() -> RoutesResponse:
         cost_max_usd_for_local=config.cost_max_usd_for_local,
         llm_input_usd_per_1k_tokens=config.llm_input_usd_per_1k_tokens,
         cost_chars_per_token=config.cost_chars_per_token,
+        available_public_provider=get_public_provider_from_url(),
     )

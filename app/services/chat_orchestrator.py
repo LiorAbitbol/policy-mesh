@@ -11,6 +11,7 @@ from app.audit.context import AuditRequestContext
 from app.audit.service import persist_audit_event
 from app.core.telemetry import record_chat_request
 from app.decision.engine import decide
+from app.providers import anthropic as anthropic_provider
 from app.providers import ollama as ollama_provider
 from app.providers import openai as openai_provider
 
@@ -52,6 +53,8 @@ def handle_chat_request(body: ChatRequest) -> ChatResponse:
     start = time.perf_counter()
     if provider_key == "local":
         result = ollama_provider.chat(messages, model=model)
+    elif provider_key == "anthropic":
+        result = anthropic_provider.chat(messages, model=model)
     else:
         result = openai_provider.chat(messages, model=model)
     latency_ms = (time.perf_counter() - start) * 1000.0

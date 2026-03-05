@@ -12,7 +12,7 @@ from app.decision.reason_codes import (
 
 
 class DecisionResult(TypedDict):
-    provider: str  # "local" | "openai"
+    provider: str  # "local" | "openai" | "anthropic"
     reason_codes: list[str]
 
 

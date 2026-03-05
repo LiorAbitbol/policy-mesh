@@ -18,7 +18,7 @@ def test_get_routes_returns_200_and_expected_keys() -> None:
     assert body["rule_order"] == ["sensitivity", "cost", "default"]
     assert body["sensitivity_keyword_count"] >= 0
     assert body["cost_max_prompt_length_for_local"] >= 0
-    assert body["default_provider"] in ("local", "openai")
+    assert body["default_provider"] in ("local", "openai", "anthropic")
 
 
 def test_get_routes_reflects_env_sensitivity_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -45,6 +45,22 @@ def test_get_routes_reflects_env_default_provider(monkeypatch: pytest.MonkeyPatc
     assert resp.json()["default_provider"] == "local"
 
 
+def test_get_routes_reflects_env_default_provider_anthropic(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DEFAULT_PROVIDER", "anthropic")
+    client = TestClient(app)
+    resp = client.get("/v1/routes")
+    assert resp.status_code == 200
+    assert resp.json()["default_provider"] == "anthropic"
+
+
+def test_get_routes_available_public_provider_reflects_public_llm_url(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("PUBLIC_LLM_URL", "https://api.anthropic.com")
+    client = TestClient(app)
+    resp = client.get("/v1/routes")
+    assert resp.status_code == 200
+    assert resp.json()["available_public_provider"] == "anthropic"
+
+
 def test_get_routes_does_not_expose_secrets() -> None:
     client = TestClient(app)
     resp = client.get("/v1/routes")
@@ -59,4 +75,5 @@ def test_get_routes_does_not_expose_secrets() -> None:
         "cost_max_usd_for_local",
         "llm_input_usd_per_1k_tokens",
         "cost_chars_per_token",
+        "available_public_provider",
     }

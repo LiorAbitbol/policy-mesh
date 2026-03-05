@@ -47,5 +47,9 @@ class RoutesResponse(BaseModel):
     )
     default_provider: str = Field(
         ...,
-        description="Provider used when no sensitivity or cost rule applies (local or openai).",
+        description="Provider used when no sensitivity or cost rule applies (local, openai, or anthropic).",
+    )
+    available_public_provider: str = Field(
+        ...,
+        description="Public provider inferred from PUBLIC_LLM_URL (e.g. openai or anthropic when host contains that name).",
     )

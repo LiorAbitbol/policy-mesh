@@ -17,7 +17,7 @@ class ChatResponse(BaseModel):
     """Success: content set. Failure: error set. provider and reason_codes always present."""
 
     request_id: str = Field(..., description="unique request id for audit traceability")
-    provider: str = Field(..., description="local or openai")
+    provider: str = Field(..., description="local, openai, or anthropic")
     reason_codes: list[str] = Field(..., description="decision reason codes")
     content: str | None = Field(None, description="assistant reply (success)")
     error: str | None = Field(None, description="error message or failure category (failure)")
