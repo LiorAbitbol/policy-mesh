@@ -33,6 +33,7 @@ The three roles below are fulfilled by AI agents (any compatible model or tool).
 - Modify tests (`tests/**`)
 - Add dependencies directly
 - Modify implementation/config files (for example: `.github/workflows/**`, `scripts/**`, runtime/config files) unless the user explicitly approves an exception for that session
+- **Implement a behavior or config change when the user requests it** — instead, create a task (in `.context/tasks.md` and `.context/private/tasks/T-XXXX.md` with Coder and Tester handoff prompts) and direct the user to run Coder then Tester; do not apply the change yourself
 
 **Output Requirements**
 Every task definition/handoff must include:
@@ -123,7 +124,7 @@ One task = one commit-sized change.
 3. Tester validates task.
 4. If defects are found, Coder fixes within task scope.
 5. Task is complete when validation checklist passes.
-6. Once Coder and Tester are validated, record completion in the task doc and `.context/TASKS.md`, then perform a **git commit** for the completed task (one task = one commit).
+6. Once Coder and Tester are validated, record completion in the task doc and `.context/tasks.md`, then perform a **git commit** for the completed task (one task = one commit).
 
 No role may expand scope without creating a new task.
 
