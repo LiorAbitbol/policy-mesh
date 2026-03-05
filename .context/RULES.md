@@ -15,10 +15,11 @@ Define the non-negotiable engineering guardrails for V1 execution. This is the c
 - Explicitly out of scope for V1:
   - RAG
   - Tenancy/auth
-  - Multi-provider beyond local + OpenAI
+  - Multi-provider beyond local + OpenAI + Anthropic
   - Caching
   - Streaming
   - UI expansion
+- Policy has a single source of truth: the file specified by POLICY_FILE. POLICY_FILE must be set and the file must exist and be valid; otherwise the application errors. Env is not a source for policy.
 - No new endpoints, services, or modules unless explicitly required by the active task.
 - No speculative implementation or future-proofing hooks.
 - No broad abstractions in V1 unless they provide immediate value.

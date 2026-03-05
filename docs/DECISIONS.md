@@ -325,6 +325,33 @@ Introduce an optional USD-based cost gate for routing using a chars→tokens heu
 
 ---
 
+## DEC-016: M3 — URL-based provider config, Anthropic via httpx, policy from file
+- Status: `accepted`
+- Date: 2026-03-05
+
+### Decision
+- **Provider config:** Use `LOCAL_LLM_URL` (local LLM endpoint, default `http://localhost:11434`) and `PUBLIC_LLM_URL` (public/cloud endpoint; provider OpenAI vs Anthropic inferred from URL). API keys: `LOCAL_LLM_API_KEY` (optional, for local backends that require auth), `PUBLIC_LLM_API_KEY` (for public LLM). Cost policy uses `LLM_INPUT_USD_PER_1K_TOKENS` (provider-agnostic). No backward compatibility: do not fall back to legacy `OPENAI_*` / `OLLAMA_*` env names.
+- **Anthropic:** Implement Anthropic provider adapter using **httpx only** (no Anthropic SDK); map Messages API request/response by hand. Same pattern as existing OpenAI and Ollama adapters.
+- **Policy:** Policy has a single source of truth: the file specified by `POLICY_FILE`. `POLICY_FILE` must be set and the file must exist and be valid; otherwise the application errors (e.g. at startup or when policy is first needed). Env is not a source for policy. Schema extensible for future policy types (e.g. capability).
+
+### Why
+- Single URL per “side” (local vs public) simplifies ops and supports custom/proxy endpoints.
+- One public API key and URL-based provider inference avoid per-provider env proliferation.
+- httpx-only for Anthropic keeps the codebase consistent and avoids new dependencies.
+- External policy file enables file-based config and future extensibility (e.g. capability policy) without changing decision semantics.
+
+### Alternatives Considered
+- Per-provider env vars (OPENAI_API_KEY, ANTHROPIC_API_KEY, etc.); rejected in favor of unified PUBLIC_LLM_* and URL-based provider selection.
+- Anthropic SDK; rejected to keep single HTTP client and no new dependency.
+- Backward-compat fallbacks for old env names; rejected for clarity and to avoid maintaining two config paths.
+- Policy from env when POLICY_FILE unset; rejected in favor of requiring POLICY_FILE and failing if policy is not available (no silent fallback).
+
+### Risks
+- Provider inference from PUBLIC_LLM_URL may be ambiguous for custom/proxy URLs; document supported hosts (e.g. api.openai.com, api.anthropic.com).
+- Policy file schema must remain backward-compatible as new policy types are added.
+
+---
+
 ## Dependency Decision Template
 Use this template when introducing any new dependency.
 
