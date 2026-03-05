@@ -17,14 +17,14 @@ Top-level keys:
   - **max_usd_for_local** (number or null, optional): Prefer local when estimated cost (USD) ≤ this. Use `null` or omit to disable USD mode. Default: `null`.
   - **input_usd_per_1m_tokens** (number or null, optional): Price in USD per 1M input tokens for USD estimate (e.g. `0.15` for $0.15/1M). Required for USD mode when `max_usd_for_local` is set. Default: `null`.
   - **chars_per_token** (integer, optional): Heuristic for token estimate (tokens ≈ chars / this). Default: `4`.
-  - **default_provider** (string, optional): Default when no rule matches: `local` or `public` only. Which public provider (openai vs anthropic) is derived from **PUBLIC_LLM_URL** at decision time, not from the policy file. Invalid or missing value defaults to `public`.
+  - **default_provider** (string, optional): Default when no rule matches: `local` or `public` only. Which public provider (openai vs anthropic) is derived from **PUBLIC_LLM_URL** at decision time, not from the policy file. Invalid or missing value defaults to `local`. Terminology: we use **local** (not "private") to align with **LOCAL_LLM_URL** and the common meaning "runs on your infrastructure"; "public" means a third-party cloud API.
 
 Unknown top-level keys (e.g. `capability`) are **ignored** and do not cause load failure (extensibility).
 
 ## Where the policy file lives
 
-- **In-repo example:** An example policy file lives in **docs/** (e.g. `docs/policies.example.json`). Copy it and customize: `cp docs/policies.example.json ./policies.json`.
-- **At runtime:** **POLICY_FILE** can be **any path** the operator chooses. The path is under operator control; there is no hardcoded location. Common choices:
+- **In-repo:** A default policy is included in the app at **`app/policies.json`** (used by the Docker image; path inside container: `./app/policies.json`). An example also lives in **docs/** (`docs/policies.example.json`) for reference; copy and customize: `cp docs/policies.example.json ./policies.json` when running on the host.
+- **At runtime:** **POLICY_FILE** can be **any path** the operator chooses. In Docker, the image sets `POLICY_FILE=./app/policies.json` by default. Other common choices:
   - Next to the app: `./policies.json` or `./config/policies.json`
   - System config: `/etc/policy-mesh/policies.json`
 
@@ -44,7 +44,7 @@ See [policies.example.json](policies.example.json). Copy and customize:
     "max_usd_for_local": null,
     "input_usd_per_1m_tokens": null,
     "chars_per_token": 4,
-    "default_provider": "public"
+    "default_provider": "local"
   }
 }
 ```
@@ -59,7 +59,7 @@ USD mode example (prefer local when estimated cost ≤ 0.09):
     "max_usd_for_local": 0.09,
     "input_usd_per_1m_tokens": 1.5,
     "chars_per_token": 4,
-    "default_provider": "public"
+    "default_provider": "local"
   }
 }
 ```

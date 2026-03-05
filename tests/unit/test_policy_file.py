@@ -18,7 +18,7 @@ def _valid_policy() -> dict:
             "max_usd_for_local": None,
             "input_usd_per_1m_tokens": None,
             "chars_per_token": 4,
-            "default_provider": "public",
+            "default_provider": "local",
         },
     }
 
@@ -31,7 +31,7 @@ def test_load_policy_config_valid_json_produces_policy_config(tmp_path: Path) ->
     assert isinstance(config, PolicyConfig)
     assert config.sensitivity_keywords == ("internal", "confidential")
     assert config.cost_max_prompt_length_for_local == 1000
-    assert config.default_provider == "public"
+    assert config.default_provider == "local"
     assert config.cost_max_usd_for_local is None
     assert config.llm_input_usd_per_1m_tokens is None
     assert config.cost_chars_per_token == 4
@@ -59,14 +59,24 @@ def test_load_policy_config_default_provider_local(tmp_path: Path) -> None:
     assert config.default_provider == "local"
 
 
-def test_load_policy_config_default_provider_invalid_defaults_to_public(tmp_path: Path) -> None:
-    """Invalid or unknown default_provider value defaults to public."""
+def test_load_policy_config_default_provider_public(tmp_path: Path) -> None:
+    """Policy with default_provider public is accepted."""
+    policy = _valid_policy()
+    policy["cost"]["default_provider"] = "public"
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    config = load_policy_config(path=str(path))
+    assert config.default_provider == "public"
+
+
+def test_load_policy_config_default_provider_invalid_defaults_to_local(tmp_path: Path) -> None:
+    """Invalid or unknown default_provider value defaults to local."""
     policy = _valid_policy()
     policy["cost"]["default_provider"] = "openai"
     path = tmp_path / "policies.json"
     path.write_text(json.dumps(policy), encoding="utf-8")
     config = load_policy_config(path=str(path))
-    assert config.default_provider == "public"
+    assert config.default_provider == "local"
 
 
 def test_load_policy_config_policy_file_unset_raises(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -123,4 +133,4 @@ def test_load_policy_config_unknown_top_level_keys_ignored(tmp_path: Path) -> No
     path.write_text(json.dumps(policy), encoding="utf-8")
     config = load_policy_config(path=str(path))
     assert config.sensitivity_keywords == ("internal", "confidential")
-    assert config.default_provider == "public"
+    assert config.default_provider == "local"

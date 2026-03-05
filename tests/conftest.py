@@ -9,7 +9,7 @@ DEFAULT_POLICY_JSON = """{
     "max_usd_for_local": null,
     "input_usd_per_1m_tokens": null,
     "chars_per_token": 4,
-    "default_provider": "public"
+    "default_provider": "local"
   }
 }"""
 

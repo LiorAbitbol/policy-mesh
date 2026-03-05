@@ -110,10 +110,10 @@ def load_policy_config(path: str | None = None) -> PolicyConfig:
     if cost_chars_per_token <= 0:
         cost_chars_per_token = 4
 
-    default_provider_raw = (cost.get("default_provider") or "public")
+    default_provider_raw = (cost.get("default_provider") or "local")
     default_provider = str(default_provider_raw).strip().lower()
     if default_provider not in ("local", "public"):
-        default_provider = "public"
+        default_provider = "local"
 
     return PolicyConfig(
         sensitivity_keywords=sensitivity_keywords,
