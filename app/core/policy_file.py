@@ -105,7 +105,7 @@ def load_policy_config(path: str | None = None) -> PolicyConfig:
 
     cost_max_prompt_length_for_local = _int("max_prompt_length_for_local", 1000)
     cost_max_usd_for_local = _float_or_none("max_usd_for_local")
-    llm_input_usd_per_1k_tokens = _positive_float_or_none("input_usd_per_1k_tokens")
+    llm_input_usd_per_1m_tokens = _positive_float_or_none("input_usd_per_1m_tokens")
     cost_chars_per_token = _int("chars_per_token", 4, min_val=1)
     if cost_chars_per_token <= 0:
         cost_chars_per_token = 4
@@ -120,6 +120,6 @@ def load_policy_config(path: str | None = None) -> PolicyConfig:
         cost_max_prompt_length_for_local=cost_max_prompt_length_for_local,
         default_provider=default_provider,
         cost_max_usd_for_local=cost_max_usd_for_local,
-        llm_input_usd_per_1k_tokens=llm_input_usd_per_1k_tokens,
+        llm_input_usd_per_1m_tokens=llm_input_usd_per_1m_tokens,
         cost_chars_per_token=cost_chars_per_token,
     )

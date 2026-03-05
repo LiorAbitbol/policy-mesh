@@ -330,7 +330,7 @@ Introduce an optional USD-based cost gate for routing using a chars→tokens heu
 - Date: 2026-03-05
 
 ### Decision
-- **Provider config:** Use `LOCAL_LLM_URL` (local LLM endpoint, default `http://localhost:11434`) and `PUBLIC_LLM_URL` (public/cloud endpoint; provider OpenAI vs Anthropic inferred from URL). API keys: `LOCAL_LLM_API_KEY` (optional, for local backends that require auth), `PUBLIC_LLM_API_KEY` (for public LLM). Cost policy: input price (USD per 1k tokens) is configured in the **policy file** (cost.input_usd_per_1k_tokens), not via env. No backward compatibility: do not fall back to legacy `OPENAI_*` / `OLLAMA_*` env names.
+- **Provider config:** Use `LOCAL_LLM_URL` (local LLM endpoint, default `http://localhost:11434`) and `PUBLIC_LLM_URL` (public/cloud endpoint; provider OpenAI vs Anthropic inferred from URL). API keys: `LOCAL_LLM_API_KEY` (optional, for local backends that require auth), `PUBLIC_LLM_API_KEY` (for public LLM). Cost policy: input price (USD per 1M tokens) is configured in the **policy file** (cost.input_usd_per_1m_tokens), not via env. No backward compatibility: do not fall back to legacy `OPENAI_*` / `OLLAMA_*` env names.
 - **Anthropic:** Implement Anthropic provider adapter using **httpx only** (no Anthropic SDK); map Messages API request/response by hand. Same pattern as existing OpenAI and Ollama adapters.
 - **Policy:** Policy has a single source of truth: the file specified by `POLICY_FILE`. `POLICY_FILE` must be set and the file must exist and be valid; otherwise the application errors (e.g. at startup or when policy is first needed). Env is not a source for policy. Schema extensible for future policy types (e.g. capability).
 
@@ -349,6 +349,47 @@ Introduce an optional USD-based cost gate for routing using a chars→tokens heu
 ### Risks
 - Provider inference from PUBLIC_LLM_URL may be ambiguous for custom/proxy URLs; document supported hosts (e.g. api.openai.com, api.anthropic.com).
 - Policy file schema must remain backward-compatible as new policy types are added.
+
+---
+
+## DEC-017: M3 — Cost policy in USD per 1M input tokens (T-306)
+- Status: `accepted`
+- Date: 2026-03-05
+
+### Decision
+Express the cost policy price in **USD per 1M input tokens** (policy key `input_usd_per_1m_tokens`), not per 1k. Formula: `cost_usd ≈ (tokens / 1_000_000) * input_usd_per_1m_tokens`. No backward compatibility for the old per-1k key; migration: replace key and set value = old_value × 1000.
+
+### Why
+- Provider pricing pages (OpenAI, Anthropic) publish rates per 1M tokens; same unit reduces operator friction and copy-paste errors.
+- One consistent unit avoids confusion; per-1M values are easier to compare across providers.
+
+### Alternatives Considered
+- Keep per-1k; rejected in favor of aligning with provider docs.
+- Support both units; rejected to keep a single source of truth.
+
+### Risks
+- Breaking change for existing policy files; documented in POLICY_FILE_SCHEMA migration note.
+
+---
+
+## DEC-018: Cost policy uses input tokens only (not output)
+- Status: `accepted`
+- Date: 2026-03-05
+
+### Decision
+The cost-based routing rule uses **input token price only**. There is no output token price or combined input+output cost in the policy. The estimate is applied to the prompt (input) size when deciding where to route.
+
+### Why
+- **Routing is decided before the LLM responds.** Output length is unknown at decision time; only input (prompt) size is available.
+- **Determinism.** Using only input keeps the rule deterministic and simple; no need to simulate or guess output size.
+- **Cost gate meaning.** The policy answers “is this request cheap enough to send to the cloud?”—input cost is the right signal for that. Full request cost (input + output) could be tracked in audit/metrics later without changing routing.
+
+### Alternatives Considered
+- Add output price and estimate output tokens; rejected for V1 (adds complexity and requires heuristics or a two-phase flow).
+- Post-hoc cost reporting only; out of scope for routing policy.
+
+### Risks
+- Actual cost may be higher than the estimate when output is large; operators should treat the threshold as input-cost-only. Audit can record token usage if providers return it in the future.
 
 ---
 

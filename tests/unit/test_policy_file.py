@@ -16,7 +16,7 @@ def _valid_policy() -> dict:
         "cost": {
             "max_prompt_length_for_local": 1000,
             "max_usd_for_local": None,
-            "input_usd_per_1k_tokens": None,
+            "input_usd_per_1m_tokens": None,
             "chars_per_token": 4,
             "default_provider": "public",
         },
@@ -33,20 +33,20 @@ def test_load_policy_config_valid_json_produces_policy_config(tmp_path: Path) ->
     assert config.cost_max_prompt_length_for_local == 1000
     assert config.default_provider == "public"
     assert config.cost_max_usd_for_local is None
-    assert config.llm_input_usd_per_1k_tokens is None
+    assert config.llm_input_usd_per_1m_tokens is None
     assert config.cost_chars_per_token == 4
 
 
 def test_load_policy_config_usd_mode(tmp_path: Path) -> None:
-    """Policy with max_usd_for_local and input_usd_per_1k_tokens sets USD fields."""
+    """Policy with max_usd_for_local and input_usd_per_1m_tokens sets USD fields."""
     policy = _valid_policy()
     policy["cost"]["max_usd_for_local"] = 0.09
-    policy["cost"]["input_usd_per_1k_tokens"] = 0.0015
+    policy["cost"]["input_usd_per_1m_tokens"] = 1.5
     path = tmp_path / "policies.json"
     path.write_text(json.dumps(policy), encoding="utf-8")
     config = load_policy_config(path=str(path))
     assert config.cost_max_usd_for_local == 0.09
-    assert config.llm_input_usd_per_1k_tokens == 0.0015
+    assert config.llm_input_usd_per_1m_tokens == 1.5
 
 
 def test_load_policy_config_default_provider_local(tmp_path: Path) -> None:

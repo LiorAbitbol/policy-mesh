@@ -18,7 +18,7 @@ def _config(
     max_length: int = 1000,
     default_provider: str = "public",
     cost_max_usd_for_local: float | None = None,
-    llm_input_usd_per_1k_tokens: float | None = None,
+    llm_input_usd_per_1m_tokens: float | None = None,
     cost_chars_per_token: int = 4,
 ) -> PolicyConfig:
     return PolicyConfig(
@@ -26,7 +26,7 @@ def _config(
         cost_max_prompt_length_for_local=max_length,
         default_provider=default_provider,
         cost_max_usd_for_local=cost_max_usd_for_local,
-        llm_input_usd_per_1k_tokens=llm_input_usd_per_1k_tokens,
+        llm_input_usd_per_1m_tokens=llm_input_usd_per_1m_tokens,
         cost_chars_per_token=cost_chars_per_token,
     )
 
@@ -129,15 +129,14 @@ def test_every_decision_has_provider_and_reason_codes() -> None:
 
 def test_cost_usd_mode_under_threshold_returns_local() -> None:
     """USD-mode: estimated cost under threshold → provider=local, COST_PREFER_LOCAL."""
-    # USD-mode active when both cost_max_usd_for_local and llm_input_usd_per_1k_tokens are set.
+    # USD-mode: cost_usd = (tokens/1e6)*price. 4000 chars → 1000 tokens; 1000/1e6*20 = $0.02 < $0.05.
     config = _config(
         keywords=(),
         max_length=10_000,
         cost_max_usd_for_local=0.05,
-        llm_input_usd_per_1k_tokens=0.02,
+        llm_input_usd_per_1m_tokens=20.0,
         cost_chars_per_token=4,
     )
-    # prompt_length=4_000 chars → tokens≈1_000 → cost≈(1000/1000)*0.02 = $0.02 < $0.05
     result = decide(prompt_text="x" * 4000, prompt_length=4000, config=config)
     assert result["provider"] == "local"
     assert result["reason_codes"] == [COST_PREFER_LOCAL]
@@ -150,10 +149,10 @@ def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
         max_length=10_000,
         default_provider="public",
         cost_max_usd_for_local=0.05,
-        llm_input_usd_per_1k_tokens=0.02,
+        llm_input_usd_per_1m_tokens=20.0,
         cost_chars_per_token=4,
     )
-    # prompt_length=12_000 chars → tokens≈3_000 → cost≈(3000/1000)*0.02 = $0.06 > $0.05
+    # prompt_length=12_000 chars → tokens≈3_000 → cost = 3000/1e6*20 = $0.06 > $0.05
     result = decide(prompt_text="x" * 12_000, prompt_length=12_000, config=config)
     assert result["provider"] == "openai"
     assert result["reason_codes"] == [DEFAULT_OPENAI]

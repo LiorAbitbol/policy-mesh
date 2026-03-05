@@ -161,7 +161,7 @@ Returns the current effective routing policy (read-only). No secrets or keyword 
 
 ### Response (200)
 
-Includes: `rule_order`, `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `usd_cost_mode_active`, `cost_max_usd_for_local`, `llm_input_usd_per_1k_tokens`, `cost_chars_per_token`, `default_provider`. See OpenAPI schema or [Engine rules](ENGINE_RULES.md) for meaning.
+Includes: `rule_order`, `sensitivity_keyword_count`, `cost_max_prompt_length_for_local`, `usd_cost_mode_active`, `cost_max_usd_for_local`, `llm_input_usd_per_1m_tokens`, `cost_chars_per_token`, `default_provider`. See OpenAPI schema or [Engine rules](ENGINE_RULES.md) for meaning.
 
 **Example:**
 

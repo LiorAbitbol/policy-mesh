@@ -37,7 +37,7 @@ def decide(
         prompt_length=prompt_length,
         cost_max_prompt_length_for_local=config.cost_max_prompt_length_for_local,
         cost_max_usd_for_local=config.cost_max_usd_for_local,
-        llm_input_usd_per_1k_tokens=config.llm_input_usd_per_1k_tokens,
+        llm_input_usd_per_1m_tokens=config.llm_input_usd_per_1m_tokens,
         cost_chars_per_token=config.cost_chars_per_token,
     ):
         return {"provider": "local", "reason_codes": [COST_PREFER_LOCAL]}

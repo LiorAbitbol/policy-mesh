@@ -15,7 +15,7 @@ Top-level keys:
 - **cost** (object, required): Cost rule configuration.
   - **max_prompt_length_for_local** (integer, optional): Prefer local when prompt length (chars) ≤ this. Default: `1000`.
   - **max_usd_for_local** (number or null, optional): Prefer local when estimated cost (USD) ≤ this. Use `null` or omit to disable USD mode. Default: `null`.
-  - **input_usd_per_1k_tokens** (number or null, optional): Price in USD per 1k input tokens for USD estimate. Required for USD mode when `max_usd_for_local` is set. Default: `null`.
+  - **input_usd_per_1m_tokens** (number or null, optional): Price in USD per 1M input tokens for USD estimate (e.g. `0.15` for $0.15/1M). Required for USD mode when `max_usd_for_local` is set. Default: `null`.
   - **chars_per_token** (integer, optional): Heuristic for token estimate (tokens ≈ chars / this). Default: `4`.
   - **default_provider** (string, optional): Default when no rule matches: `local` or `public` only. Which public provider (openai vs anthropic) is derived from **PUBLIC_LLM_URL** at decision time, not from the policy file. Invalid or missing value defaults to `public`.
 
@@ -42,7 +42,7 @@ See [policies.example.json](policies.example.json). Copy and customize:
   "cost": {
     "max_prompt_length_for_local": 1000,
     "max_usd_for_local": null,
-    "input_usd_per_1k_tokens": null,
+    "input_usd_per_1m_tokens": null,
     "chars_per_token": 4,
     "default_provider": "public"
   }
@@ -57,11 +57,13 @@ USD mode example (prefer local when estimated cost ≤ 0.09):
   "cost": {
     "max_prompt_length_for_local": 1000,
     "max_usd_for_local": 0.09,
-    "input_usd_per_1k_tokens": 0.0015,
+    "input_usd_per_1m_tokens": 1.5,
     "chars_per_token": 4,
     "default_provider": "public"
   }
 }
 ```
 
-**Migration:** If your policy file still has `default_provider: "openai"` or `"anthropic"`, replace with `"public"`. The concrete provider (openai vs anthropic) is determined by **PUBLIC_LLM_URL** at runtime.
+**Migration (default_provider):** If your policy file still has `default_provider: "openai"` or `"anthropic"`, replace with `"public"`. The concrete provider (openai vs anthropic) is determined by **PUBLIC_LLM_URL** at runtime.
+
+**Migration (input_usd_per_1k_tokens → input_usd_per_1m_tokens):** The cost price field was renamed from `input_usd_per_1k_tokens` to `input_usd_per_1m_tokens` (USD per 1M tokens). Replace the key and set **value = old_value × 1000** (e.g. `0.0015` per 1k → `1.5` per 1M). The old key is no longer read.

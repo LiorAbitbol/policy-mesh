@@ -30,7 +30,7 @@ If the array is empty or missing, the rule is **skipped**. The prompt is checked
 
 The engine supports two modes. **Only one is active at a time:**
 
-- **USD mode** — Used when both `cost.max_usd_for_local` and `cost.input_usd_per_1k_tokens` are set in the policy file. Compares an estimated public LLM cost to the threshold.
+- **USD mode** — Used when both `cost.max_usd_for_local` and `cost.input_usd_per_1m_tokens` are set in the policy file. Compares an estimated public LLM cost to the threshold.
 - **Length mode** — Used when USD mode is not configured. Compares prompt length (characters) to a maximum length.
 
 ### USD mode (optional)
@@ -40,19 +40,19 @@ When both of these are set in the policy file, the engine uses USD estimation an
 | Policy file (cost) | Type | Effect |
 |--------------------|------|--------|
 | `max_usd_for_local` | Number, ≥ 0, or null | Prefer local when estimated prompt cost (USD) ≤ this value. Use `0` or `null` to disable USD prefer-local. |
-| `input_usd_per_1k_tokens` | Number, > 0, or null | Price in USD per 1k input tokens (e.g. `0.0015`). Required for USD mode. |
+| `input_usd_per_1m_tokens` | Number, > 0, or null | Price in USD per 1M input tokens (e.g. `0.15` for $0.15/1M). Required for USD mode. |
 | `chars_per_token` | Integer, > 0 | Heuristic: tokens ≈ prompt length (chars) ÷ this value. Default: `4`. |
 
 **Formula:**
 `tokens ≈ prompt_length / chars_per_token`
-`cost_usd ≈ (tokens / 1000) * input_usd_per_1k_tokens`
+`cost_usd ≈ (tokens / 1_000_000) * input_usd_per_1m_tokens`
 → Prefer local when `cost_usd ≤ max_usd_for_local`.
 
 **Note:** This is an approximation. Actual tokenization and pricing may differ.
 
 ### Length mode (fallback)
 
-When USD mode is **not** configured (either `max_usd_for_local` or `input_usd_per_1k_tokens` is null/missing), the cost rule uses character length only:
+When USD mode is **not** configured (either `max_usd_for_local` or `input_usd_per_1m_tokens` is null/missing), the cost rule uses character length only:
 
 | Policy file (cost) | Type | Effect |
 |--------------------|------|--------|

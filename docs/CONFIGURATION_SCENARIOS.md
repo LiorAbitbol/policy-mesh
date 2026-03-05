@@ -20,7 +20,7 @@ This page gives copy-paste snippets for common setups. **Policy** (sensitivity, 
   "cost": {
     "max_prompt_length_for_local": 1000,
     "max_usd_for_local": null,
-    "input_usd_per_1k_tokens": null,
+    "input_usd_per_1m_tokens": null,
     "chars_per_token": 4,
     "default_provider": "public"
   }
@@ -47,7 +47,7 @@ Ensure Ollama is running and a model is pulled if you want those sensitive reque
 
 **Goal:** Prefer local when the estimated public LLM input cost is below a cap (e.g. $0.10); otherwise send to OpenAI.
 
-**Behavior:** When both `max_usd_for_local` and `input_usd_per_1k_tokens` are set in the policy file, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
+**Behavior:** When both `max_usd_for_local` and `input_usd_per_1m_tokens` are set in the policy file, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
 
 **In `.env`:** Set `POLICY_FILE` and `PUBLIC_LLM_API_KEY=sk-your-key-here`.
 
@@ -59,14 +59,14 @@ Ensure Ollama is running and a model is pulled if you want those sensitive reque
   "cost": {
     "max_prompt_length_for_local": 1000,
     "max_usd_for_local": 0.10,
-    "input_usd_per_1k_tokens": 0.0015,
+    "input_usd_per_1m_tokens": 1.5,
     "chars_per_token": 4,
     "default_provider": "public"
   }
 }
 ```
 
-To **never** prefer local by cost, set `"max_usd_for_local": 0` (and keep `input_usd_per_1k_tokens` set).
+To **never** prefer local by cost, set `"max_usd_for_local": 0` (and keep `input_usd_per_1m_tokens` set).
 
 ---
 
