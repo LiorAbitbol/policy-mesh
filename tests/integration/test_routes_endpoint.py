@@ -1,9 +1,13 @@
 """Integration tests for GET /v1/routes: effective policy view. No real network."""
 
+import json
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from tests.conftest import DEFAULT_POLICY_JSON
 
 
 def test_get_routes_returns_200_and_expected_keys() -> None:
@@ -21,32 +25,56 @@ def test_get_routes_returns_200_and_expected_keys() -> None:
     assert body["default_provider"] in ("local", "openai", "anthropic")
 
 
-def test_get_routes_reflects_env_sensitivity_keywords(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("SENSITIVITY_KEYWORDS", "foo, bar, baz")
+def test_get_routes_reflects_policy_file_sensitivity_keywords(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    policy = json.loads(DEFAULT_POLICY_JSON)
+    policy["sensitivity"]["keywords"] = ["foo", "bar", "baz"]
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
     client = TestClient(app)
     resp = client.get("/v1/routes")
     assert resp.status_code == 200
     assert resp.json()["sensitivity_keyword_count"] == 3
 
 
-def test_get_routes_reflects_env_cost_threshold(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("COST_MAX_PROMPT_LENGTH_FOR_LOCAL", "500")
+def test_get_routes_reflects_policy_file_cost_threshold(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    policy = json.loads(DEFAULT_POLICY_JSON)
+    policy["cost"]["max_prompt_length_for_local"] = 500
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
     client = TestClient(app)
     resp = client.get("/v1/routes")
     assert resp.status_code == 200
     assert resp.json()["cost_max_prompt_length_for_local"] == 500
 
 
-def test_get_routes_reflects_env_default_provider(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("DEFAULT_PROVIDER", "local")
+def test_get_routes_reflects_policy_file_default_provider_local(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    policy = json.loads(DEFAULT_POLICY_JSON)
+    policy["cost"]["default_provider"] = "local"
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
     client = TestClient(app)
     resp = client.get("/v1/routes")
     assert resp.status_code == 200
     assert resp.json()["default_provider"] == "local"
 
 
-def test_get_routes_reflects_env_default_provider_anthropic(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("DEFAULT_PROVIDER", "anthropic")
+def test_get_routes_reflects_policy_file_default_provider_anthropic(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    policy = json.loads(DEFAULT_POLICY_JSON)
+    policy["cost"]["default_provider"] = "anthropic"
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
     client = TestClient(app)
     resp = client.get("/v1/routes")
     assert resp.status_code == 200
@@ -77,3 +105,54 @@ def test_get_routes_does_not_expose_secrets() -> None:
         "cost_chars_per_token",
         "available_public_provider",
     }
+
+
+def test_get_routes_policy_file_unset_returns_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    """When POLICY_FILE is unset, endpoint that needs policy returns 500."""
+    monkeypatch.setenv("POLICY_FILE", "")
+    client = TestClient(app)
+    resp = client.get("/v1/routes")
+    assert resp.status_code == 500
+
+
+def test_get_routes_policy_file_invalid_json_returns_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """When POLICY_FILE points to invalid JSON, endpoint returns 500."""
+    path = tmp_path / "bad.json"
+    path.write_text("not valid json {", encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
+    client = TestClient(app)
+    resp = client.get("/v1/routes")
+    assert resp.status_code == 500
+
+
+def test_get_routes_policy_file_missing_returns_error(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """When POLICY_FILE points to a nonexistent file, endpoint returns 500."""
+    missing_path = tmp_path / "nonexistent.json"
+    assert not missing_path.exists()
+    monkeypatch.setenv("POLICY_FILE", str(missing_path))
+    client = TestClient(app)
+    resp = client.get("/v1/routes")
+    assert resp.status_code == 500
+
+
+def test_decision_engine_uses_file_policy(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """When POLICY_FILE points to valid file, decision engine uses file-derived policy (sensitivity)."""
+    policy = json.loads(DEFAULT_POLICY_JSON)
+    policy["sensitivity"]["keywords"] = ["secret"]
+    path = tmp_path / "policies.json"
+    path.write_text(json.dumps(policy), encoding="utf-8")
+    monkeypatch.setenv("POLICY_FILE", str(path))
+    from app.core.config import get_policy_config
+    from app.decision.engine import decide
+
+    config = get_policy_config()
+    assert config.sensitivity_keywords == ("secret",)
+    result = decide(prompt_text="This is secret data", prompt_length=10, config=config)
+    assert result["provider"] == "local"
+    assert "sensitive_keyword_match" in result["reason_codes"]

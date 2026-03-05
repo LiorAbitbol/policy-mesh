@@ -50,6 +50,20 @@ cp .env.example .env
 
 Edit `.env` in a text editor. You **must** set at least the following for the full app with audit and a working chat provider.
 
+#### Required: policy file (POLICY_FILE)
+
+Policy (sensitivity keywords, cost thresholds, default provider) is loaded from a JSON file only. **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid JSON, the application errors.
+
+1. Copy the example policy file and set the path in `.env`:
+   ```bash
+   cp docs/policies.example.json ./policies.json
+   ```
+   In `.env`:
+   ```env
+   POLICY_FILE=./policies.json
+   ```
+2. Edit `policies.json` as needed (keywords, cost rules, `default_provider`). See [Policy file schema](docs/POLICY_FILE_SCHEMA.md).
+
 #### Required for audit (Postgres)
 
 The default values in `.env.example` match the Postgres container. If you didn’t change them, you can leave these as-is:
@@ -63,31 +77,23 @@ The default values in `.env.example` match the Postgres container. If you didn�
 
 #### Required for chat: choose a default provider
 
+Set the default provider in your **policy file** (`cost.default_provider`): `openai`, `local`, or `anthropic`.
+
 **Option A — Use OpenAI (or other public LLM) as default**
 
-- Set your public LLM API key (required):
+- Set your public LLM API key in `.env` (required):
   ```env
   PUBLIC_LLM_API_KEY=sk-your-actual-key-here
   ```
-- Optionally set the base URL (defaults to `https://api.openai.com` if unset):
-  ```env
-  PUBLIC_LLM_URL=https://api.openai.com
-  ```
-- Leave `DEFAULT_PROVIDER` unset, or set:
-  ```env
-  DEFAULT_PROVIDER=openai
-  ```
+- In `policies.json`, set `"cost": { ..., "default_provider": "openai" }`.
 
 **Option B — Use Ollama (local) as default**
 
-- Set:
-  ```env
-  DEFAULT_PROVIDER=local
-  ```
+- In `policies.json`, set `"cost": { ..., "default_provider": "local" }`.
 - Do **not** set `PUBLIC_LLM_API_KEY` unless you also want to allow cloud fallback.
 - In Step 5 you will start Ollama and pull a model.
 
-**Optional:** See `.env.example` for routing (e.g. `SENSITIVITY_KEYWORDS`), cost rules, and timeouts.
+**Optional:** See `.env.example` for providers and timeouts; routing policy is in the policy file only.
 
 Save and close `.env`.
 

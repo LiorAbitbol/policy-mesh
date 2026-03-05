@@ -1,6 +1,6 @@
 # Configuration scenarios
 
-This page gives copy-paste `.env` snippets for common setups. For how each variable affects behavior, see [Engine rules](ENGINE_RULES.md). Start from [.env.example](../.env.example) and add or override only what’s listed below.
+This page gives copy-paste snippets for common setups. **Policy** (sensitivity, cost, default provider) is loaded from the JSON file at **POLICY_FILE** only; see [Policy file schema](POLICY_FILE_SCHEMA.md) and [policies.example.json](policies.example.json). For behavior, see [Engine rules](ENGINE_RULES.md). Start from [.env.example](../.env.example) and set **POLICY_FILE** to your policy file path.
 
 ---
 
@@ -10,15 +10,24 @@ This page gives copy-paste `.env` snippets for common setups. For how each varia
 
 **Behavior:** Sensitivity rule first → any configured keyword in the prompt → local. Otherwise cost rule, then default → OpenAI.
 
-**Add or set in `.env`:**
+**In `.env`:** Set `POLICY_FILE` and `PUBLIC_LLM_API_KEY=sk-your-key-here`.
 
-```env
-DEFAULT_PROVIDER=openai
-PUBLIC_LLM_API_KEY=sk-your-key-here
-SENSITIVITY_KEYWORDS=internal,confidential,secret
+**In your policy file (e.g. policies.json):**
+
+```json
+{
+  "sensitivity": { "keywords": ["internal", "confidential", "secret"] },
+  "cost": {
+    "max_prompt_length_for_local": 1000,
+    "max_usd_for_local": null,
+    "input_usd_per_1k_tokens": null,
+    "chars_per_token": 4,
+    "default_provider": "openai"
+  }
+}
 ```
 
-Ensure Ollama is running and a model is pulled if you want those sensitive requests to succeed. Cost rule (length or USD) is optional; if you don’t set USD vars, the length rule applies (default: prefer local when prompt ≤ 1000 chars).
+Ensure Ollama is running and a model is pulled if you want those sensitive requests to succeed.
 
 ---
 
@@ -26,41 +35,38 @@ Ensure Ollama is running and a model is pulled if you want those sensitive reque
 
 **Goal:** All chat goes to Ollama; no cloud provider.
 
-**Behavior:** Set default to local. You can leave sensitivity/cost rules as-is; they also route to local when they match. Unmatched requests still go to local because of default.
+**Behavior:** Set default to local in the policy file. Unmatched requests still go to local because of default.
 
-**Add or set in `.env`:**
+**In `.env`:** Set `POLICY_FILE` and `LOCAL_LLM_URL=http://localhost:11434` (or `http://ollama:11434` in Docker Compose).
 
-```env
-DEFAULT_PROVIDER=local
-LOCAL_LLM_URL=http://localhost:11434
-```
-
-No `PUBLIC_LLM_API_KEY` needed. Start Ollama and pull a model (e.g. `ollama pull llama2`). In Docker Compose, use `LOCAL_LLM_URL=http://ollama:11434` (set in `docker-compose.yml` for the app service).
+**In your policy file:** Set `"default_provider": "local"` under `cost`. No `PUBLIC_LLM_API_KEY` needed. Start Ollama and pull a model (e.g. `ollama pull llama2`).
 
 ---
 
 ## 3. USD cost threshold (prefer local when estimated cost is low)
 
-**Goal:** Prefer local when the estimated OpenAI input cost is below a cap (e.g. $0.10); otherwise send to OpenAI.
+**Goal:** Prefer local when the estimated public LLM input cost is below a cap (e.g. $0.10); otherwise send to OpenAI.
 
-**Behavior:** When both `COST_MAX_USD_FOR_LOCAL` and `LLM_INPUT_USD_PER_1K_TOKENS` are set, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
+**Behavior:** When both `max_usd_for_local` and `input_usd_per_1k_tokens` are set in the policy file, the cost rule uses USD. If estimated cost ≤ threshold → local; else → default (typically OpenAI).
 
-**Add or set in `.env`:**
+**In `.env`:** Set `POLICY_FILE` and `PUBLIC_LLM_API_KEY=sk-your-key-here`.
 
-```env
-DEFAULT_PROVIDER=openai
-PUBLIC_LLM_API_KEY=sk-your-key-here
-COST_MAX_USD_FOR_LOCAL=0.10
-LLM_INPUT_USD_PER_1K_TOKENS=0.0015
-COST_CHARS_PER_TOKEN=4
+**In your policy file:**
+
+```json
+{
+  "sensitivity": { "keywords": [] },
+  "cost": {
+    "max_prompt_length_for_local": 1000,
+    "max_usd_for_local": 0.10,
+    "input_usd_per_1k_tokens": 0.0015,
+    "chars_per_token": 4,
+    "default_provider": "openai"
+  }
+}
 ```
 
-To **never** prefer local by cost (always use default unless sensitivity matches), set:
-
-```env
-COST_MAX_USD_FOR_LOCAL=0
-LLM_INPUT_USD_PER_1K_TOKENS=0.0015
-```
+To **never** prefer local by cost, set `"max_usd_for_local": 0` (and keep `input_usd_per_1k_tokens` set).
 
 ---
 
@@ -84,7 +90,7 @@ You can leave `DATABASE_URL` set or unset; if it’s set but `AUDIT_ENABLED=fals
 
 You can combine:
 
-- **OpenAI default + sensitive local + USD cost:** Use scenario 1 and 3 together (sensitivity keywords + USD vars).
+- **OpenAI default + sensitive local + USD cost:** Use scenario 1 and 3 together in the same policy file (sensitivity keywords + cost USD fields).
 - **Local only + audit disabled:** Use scenario 2 and 4; no Postgres or OpenAI needed.
 
-After editing `.env`, restart the app (e.g. `docker compose up -d app` or restart uvicorn). Check effective policy with `curl -s http://localhost:8000/v1/routes`.
+After editing `.env` or the policy file, restart the app (e.g. `docker compose up -d app` or restart uvicorn). Check effective policy with `curl -s http://localhost:8000/v1/routes`.

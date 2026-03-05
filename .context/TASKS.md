@@ -18,9 +18,9 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 
 ## Current Status Snapshot
 - Last Updated: 2026-03-05
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302` (M3: Anthropic adapter + orchestrator wiring)
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303` (M3: external JSON policy file)
 - In Progress: none
-- Next: T-303
+- Next: T-304
 
 ## Task Summary
 | Execution Order | Task ID | Title | Status | Owner Role | Private Task Doc |
@@ -43,7 +43,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 | 16 | T-203 | V2: Minimal UI (chat + rules + audit) | `done` | `planner` | `.context/private/tasks/T-203.md` |
 | 17 | T-301 | M3: Env renames + URL-based provider config | `done` | `planner` | `.context/private/tasks/T-301.md` |
 | 18 | T-302 | M3: Anthropic provider adapter + orchestrator wiring | `done` | `planner` | `.context/private/tasks/T-302.md` |
-| 19 | T-303 | M3: External JSON policy file (sensitivity + cost, extensible) | `todo` | `planner` | `.context/private/tasks/T-303.md` |
+| 19 | T-303 | M3: External JSON policy file (sensitivity + cost, extensible) | `done` | `planner` | `.context/private/tasks/T-303.md` |
 | 20 | T-304 | M3: Future LLM capability policy (docs only) | `todo` | `planner` | `.context/private/tasks/T-304.md` |
 
 ## Task Index
@@ -139,7 +139,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
   - Private Task Doc: `.context/private/tasks/T-302.md`
   - Acceptance: Anthropic adapter (httpx); orchestrator and decision engine support default_provider=anthropic; /v1/routes reflects provider set.
 - T-303: M3: External JSON policy file (sensitivity + cost, extensible)
-  - Status: `todo`
+  - Status: `done`
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-303.md`
   - Acceptance: POLICY_FILE loads sensitivity + cost from JSON; env overrides; extensible schema; decision semantics unchanged.
