@@ -12,7 +12,7 @@ def test_all_reason_codes_defined_and_non_empty() -> None:
 
 
 def test_sensitive_cost_default_codes_in_all() -> None:
-    """SENSITIVE_KEYWORD_MATCH, COST_PREFER_LOCAL, DEFAULT_OPENAI are in ALL_REASON_CODES."""
+    """SENSITIVE_KEYWORD_MATCH, COST_PREFER_LOCAL, DEFAULT are in ALL_REASON_CODES."""
     assert rc.SENSITIVE_KEYWORD_MATCH in rc.ALL_REASON_CODES
     assert rc.COST_PREFER_LOCAL in rc.ALL_REASON_CODES
-    assert rc.DEFAULT_OPENAI in rc.ALL_REASON_CODES
+    assert rc.DEFAULT in rc.ALL_REASON_CODES

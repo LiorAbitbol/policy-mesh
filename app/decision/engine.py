@@ -6,7 +6,7 @@ from app.core.config import PolicyConfig, get_policy_config, get_public_provider
 from app.decision.policies import cost_prefer_local, sensitivity_match
 from app.decision.reason_codes import (
     COST_PREFER_LOCAL,
-    DEFAULT_OPENAI,
+    DEFAULT,
     SENSITIVE_KEYWORD_MATCH,
 )
 
@@ -47,4 +47,4 @@ def decide(
         provider = "local"
     else:
         provider = get_public_provider_from_url()
-    return {"provider": provider, "reason_codes": [DEFAULT_OPENAI]}
+    return {"provider": provider, "reason_codes": [DEFAULT]}

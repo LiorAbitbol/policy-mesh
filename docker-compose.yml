@@ -24,8 +24,8 @@ services:
       - "8000:8000"
     environment:
       LOCAL_LLM_URL: http://ollama:11434
-      # Policy file is copied into the image at app/policies.json (relative to WORKDIR /app).
-      POLICY_FILE: ./app/policies.json
+      # Default policy in image is app/policies.example.json (app/policies.json is gitignored).
+      POLICY_FILE: ./app/policies.example.json
       # Override so the app container reaches Postgres by service name (not localhost).
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-policy_mesh}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/${POSTGRES_DB:-policy_mesh}
     healthcheck:

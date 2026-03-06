@@ -1,6 +1,6 @@
 # Engine rules (routing policy)
 
-The **decision engine** chooses which provider (local or cloud) handles each chat request. Rules are evaluated in a fixed order; the first match wins. **Policy is loaded from a JSON file only:** **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid, the application errors. See [Policy file schema](policy_file_schema.md) and [policies.example.json](policies.example.json).
+The **decision engine** chooses which provider (local or cloud) handles each chat request. Rules are evaluated in a fixed order; the first match wins. **Policy is loaded from a JSON file only:** **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid, the application errors. See [Policy file schema](policy_file_schema.md) and [app/policies.example.json](../app/policies.example.json).
 
 ## Rule order
 
@@ -75,7 +75,7 @@ When USD mode is **not** configured (either `max_usd_for_local` or `input_usd_pe
 |-------------------|------|--------|
 | `default_provider` | `local` \| `public` | Default when no rule above matches. When `public`, the resolved provider (openai or anthropic) is derived from PUBLIC_LLM_URL at decision time. Default: `local`. |
 
-**Reason code:** The response uses `default_openai` when the default provider is chosen (even if the provider is `local`—the code name is historical).
+**Reason code:** The response uses `default` when the default provider is chosen (no sensitivity or cost match).
 
 ---
 

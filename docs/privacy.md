@@ -11,7 +11,7 @@ When audit is enabled (`DATABASE_URL` set and `AUDIT_ENABLED` not set to `false`
 **Stored fields:**
 
 - **request_id** — Unique ID for the request (for traceability).
-- **decision** — Which provider was chosen and why (e.g. `provider=openai,reason_codes=default_openai`).
+- **decision** — Which provider was chosen and why (e.g. `provider=openai,reason_codes=default`).
 - **status** — `success` or `failure`.
 - **latency_ms** — End-to-end provider latency.
 - **failure_category** — Normalized failure category when the provider call failed.

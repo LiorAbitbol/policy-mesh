@@ -45,7 +45,8 @@ policy-mesh/
 │   │   └── service.py               # Audit write orchestration helpers
 │   ├── static/                      # Minimal UI (T-203): single-page static HTML/JS
 │   │   └── index.html               # Chat, rules (GET /v1/routes), audit (GET /v1/audit/{id})
-│   ├── policies.json                # Default policy (in image; Docker uses POLICY_FILE=./app/policies.json)
+│   ├── policies.json                # Local policy (gitignored); optional override
+│   ├── policies.example.json        # Example policy (default in image; POLICY_FILE points here)
 │   └── services/                    # Application orchestration services
 │       └── chat_orchestrator.py     # /v1/chat flow: decision -> provider -> audit -> metrics
 ├── tests/                           # Automated tests (no real network calls)
@@ -69,7 +70,6 @@ policy-mesh/
 │   ├── decisions.md                # Dependency/engineering decision log
 │   ├── engine_rules.md             # Routing policy: rule order, policy file, behavior
 │   ├── policy_file_schema.md       # Policy file JSON schema and location
-│   ├── policies.example.json       # Example policy file
 │   ├── api_usage.md                # Request/response contract, curl examples
 │   ├── configuration_scenarios.md  # Common .env setups (OpenAI default, local only, etc.)
 │   ├── metrics.md                  # Prometheus metrics, scrape config, example queries

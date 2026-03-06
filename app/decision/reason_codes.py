@@ -6,12 +6,12 @@ SENSITIVE_KEYWORD_MATCH = "sensitive_keyword_match"
 # Cost: prompt under configured length threshold → prefer local.
 COST_PREFER_LOCAL = "cost_prefer_local"
 
-# Default: no sensitivity match and over cost threshold → route to openai.
-DEFAULT_OPENAI = "default_openai"
+# Default: no sensitivity match and over cost threshold → route to default provider (local or public).
+DEFAULT = "default"
 
 # All known reason codes (for validation/documentation).
 ALL_REASON_CODES = (
     SENSITIVE_KEYWORD_MATCH,
     COST_PREFER_LOCAL,
-    DEFAULT_OPENAI,
+    DEFAULT,
 )

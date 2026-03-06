@@ -23,8 +23,8 @@ Unknown top-level keys (e.g. `capability`) are **ignored** and do not cause load
 
 ## Where the policy file lives
 
-- **In-repo:** A default policy is included in the app at **`app/policies.json`** (used by the Docker image; path inside container: `./app/policies.json`). An example also lives in **docs/** (`docs/policies.example.json`) for reference; copy and customize: `cp docs/policies.example.json ./policies.json` when running on the host.
-- **At runtime:** **POLICY_FILE** can be **any path** the operator chooses. In Docker, the image sets `POLICY_FILE=./app/policies.json` by default. Other common choices:
+- **In-repo:** The app includes **`app/policies.example.json`** as the default policy (Docker image and host). For local overrides, create `app/policies.json` (gitignored) or set **POLICY_FILE** to any path. Copy and customize: `cp app/policies.example.json app/policies.json` if you want a local policy file.
+- **At runtime:** **POLICY_FILE** can be **any path** the operator chooses. Default is `./app/policies.example.json`. Other common choices:
   - Next to the app: `./policies.json` or `./config/policies.json`
   - System config: `/etc/policy-mesh/policies.json`
 
@@ -32,7 +32,7 @@ Set **POLICY_FILE** in your environment (or `.env`) to point to your JSON file.
 
 ## Example
 
-See [policies.example.json](policies.example.json). Copy and customize:
+See [app/policies.example.json](../app/policies.example.json). Copy and customize:
 
 ```json
 {

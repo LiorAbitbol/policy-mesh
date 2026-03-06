@@ -18,7 +18,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 
 ## Current Status Snapshot
 - Last Updated: 2026-03-05
-- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303`, `T-305`, `T-306`, `T-307`, `T-308`
+- Done: `T-108`, `T-101`, `T-110`, `T-111`, `T-109`, `T-104`, `T-112`, `T-102`, `T-103`, `T-105`, `T-106`, `T-107`, `T-201`, `T-202`, `T-204`, `T-203`, `T-301`, `T-302`, `T-303`, `T-305`, `T-306`, `T-307`, `T-308`, `T-309`
 - In Progress: none
 - Next: T-304
 
@@ -49,6 +49,7 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
 | 22 | T-306 | M3: Cost policy use input_usd_per_1m_tokens (match provider pricing) | `done` | `planner` | `.context/private/tasks/T-306.md` |
 | 23 | T-307 | M3: Ship default policy in Docker image (app/policies.json) | `done` | `planner` | `.context/private/tasks/T-307.md` |
 | 24 | T-308 | M3: Policy default_provider defaults to local | `done` | `planner` | `.context/private/tasks/T-308.md` |
+| 25 | T-309 | M3: Doc and config updates from testing (running list) | `done` | `planner` | `.context/private/tasks/T-309.md` |
 
 ## Task Index
 - T-101: Bootstrap FastAPI app and `/v1/health`
@@ -172,3 +173,8 @@ M3: Multiple LLM support and external configuration (LOCAL_LLM_URL, PUBLIC_LLM_U
   - Owner Role: `planner`
   - Private Task Doc: `.context/private/tasks/T-308.md`
   - Acceptance: Shipped policy and loader default to "local"; invalid/missing default_provider falls back to "local"; docs and tests updated; terminology note (local vs private).
+- T-309: M3: Doc and config updates from testing (running list)
+  - Status: `done`
+  - Owner Role: `planner`
+  - Private Task Doc: `.context/private/tasks/T-309.md`
+  - Acceptance: Items in the running list (see task doc) are implemented: POLICY_FILE default policies.example.json, OpenAI+Anthropic wording, reason code DEFAULT_OPENAI→DEFAULT, move example to app/, gitignore app/policies.json and Docker default to policies.example.json; more items may be added as testing continues.

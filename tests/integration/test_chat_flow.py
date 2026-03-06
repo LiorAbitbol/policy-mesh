@@ -57,7 +57,7 @@ def test_chat_anthropic_happy_path_returns_provider_reason_codes_content() -> No
         patch("app.services.chat_orchestrator.anthropic_provider") as mock_anthropic,
         patch("app.services.chat_orchestrator.persist_audit_event") as mock_persist,
     ):
-        mock_decide.return_value = {"provider": "anthropic", "reason_codes": ["default_openai"]}
+        mock_decide.return_value = {"provider": "anthropic", "reason_codes": ["default"]}
         mock_anthropic.chat.return_value = {"success": True, "content": "Hello from Claude"}
 
         client = TestClient(app)
@@ -71,7 +71,7 @@ def test_chat_anthropic_happy_path_returns_provider_reason_codes_content() -> No
     assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
     assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "anthropic"
-    assert data["reason_codes"] == ["default_openai"]
+    assert data["reason_codes"] == ["default"]
     assert data["content"] == "Hello from Claude"
     assert data.get("error") is None
     mock_decide.assert_called_once()
@@ -89,7 +89,7 @@ def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
         patch("app.services.chat_orchestrator.openai_provider") as mock_openai,
         patch("app.services.chat_orchestrator.persist_audit_event") as mock_persist,
     ):
-        mock_decide.return_value = {"provider": "openai", "reason_codes": ["default_openai"]}
+        mock_decide.return_value = {"provider": "openai", "reason_codes": ["default"]}
         mock_openai.chat.return_value = {"success": True, "content": "Hello from OpenAI"}
 
         client = TestClient(app)
@@ -103,7 +103,7 @@ def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
     assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
     assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "openai"
-    assert data["reason_codes"] == ["default_openai"]
+    assert data["reason_codes"] == ["default"]
     assert data["content"] == "Hello from OpenAI"
     assert data.get("error") is None
     mock_decide.assert_called_once()
@@ -112,7 +112,7 @@ def test_chat_openai_happy_path_returns_provider_reason_codes_content() -> None:
     ctx: AuditRequestContext = mock_persist.call_args[0][0]
     assert ctx.request_id
     assert "provider=openai" in ctx.decision
-    assert "default_openai" in ctx.decision
+    assert "default" in ctx.decision
     assert ctx.status == "success"
     assert ctx.latency_ms >= 0
     assert ctx.failure_category is None
@@ -125,7 +125,7 @@ def test_chat_provider_failure_returns_error_and_audit_with_failure_category() -
         patch("app.services.chat_orchestrator.openai_provider") as mock_openai,
         patch("app.services.chat_orchestrator.persist_audit_event") as mock_persist,
     ):
-        mock_decide.return_value = {"provider": "openai", "reason_codes": ["default_openai"]}
+        mock_decide.return_value = {"provider": "openai", "reason_codes": ["default"]}
         mock_openai.chat.return_value = {
             "success": False,
             "failure_category": "timeout",
@@ -143,7 +143,7 @@ def test_chat_provider_failure_returns_error_and_audit_with_failure_category() -
     assert re.fullmatch(r"[0-9a-f\\-]{36}", data["request_id"])
     assert response.headers.get("X-Request-Id") == data["request_id"]
     assert data["provider"] == "openai"
-    assert data["reason_codes"] == ["default_openai"]
+    assert data["reason_codes"] == ["default"]
     assert data.get("content") is None
     assert data["error"]  # "Request timed out" or failure_category
     mock_persist.assert_called_once()

@@ -51,7 +51,7 @@ Send a chat request. The engine routes to a provider (local, OpenAI, or Anthropi
 |-------|------|-------------|
 | `request_id` | string | Unique ID for this request; use it to fetch the audit event from `/v1/audit/{request_id}`. |
 | `provider` | string | `local`, `openai`, or `anthropic` — which provider handled the request. |
-| `reason_codes` | array of strings | Why this provider was chosen (e.g. `sensitive_keyword_match`, `cost_prefer_local`, `default_openai`). |
+| `reason_codes` | array of strings | Why this provider was chosen (e.g. `sensitive_keyword_match`, `cost_prefer_local`, `default`). |
 | `content` | string | The assistant reply (present on success). |
 | `error` | null | Omitted or null on success. |
 
@@ -61,7 +61,7 @@ Send a chat request. The engine routes to a provider (local, OpenAI, or Anthropi
 {
   "request_id": "abc-123-def",
   "provider": "openai",
-  "reason_codes": ["default_openai"],
+  "reason_codes": ["default"],
   "content": "Hello! How can I help you today?",
   "error": null
 }
@@ -77,7 +77,7 @@ Same structure, but `content` is null and `error` contains a message or failure 
 {
   "request_id": "abc-123-def",
   "provider": "openai",
-  "reason_codes": ["default_openai"],
+  "reason_codes": ["default"],
   "content": null,
   "error": "Provider request failed: ..."
 }
@@ -137,7 +137,7 @@ Fetch the audit event for a given chat request. Returns only safe fields (no raw
 | Field | Type | Description |
 |-------|------|-------------|
 | `request_id` | string | Same as path. |
-| `decision` | string | e.g. `provider=openai,reason_codes=default_openai`. |
+| `decision` | string | e.g. `provider=openai,reason_codes=default`. |
 | `status` | string | `success` or `failure`. |
 | `latency_ms` | number | End-to-end provider latency in milliseconds. |
 | `failure_category` | string or null | Normalized failure category when status is failure. |

@@ -1,6 +1,6 @@
 # Configuration scenarios
 
-This page gives copy-paste snippets for common setups. **Policy** (sensitivity, cost, default provider) is loaded from the JSON file at **POLICY_FILE** only; see [Policy file schema](policy_file_schema.md) and [policies.example.json](policies.example.json). The in-repo example lives in **docs/**; at runtime **POLICY_FILE** can be any path (e.g. `./policies.json` or `/etc/policy-mesh/policies.json`). Policy `default_provider` is **`local`** or **`public`** only; when `public`, the concrete provider (openai vs anthropic) comes from **PUBLIC_LLM_URL**. For behavior, see [Engine rules](engine_rules.md). Start from [.env.example](../.env.example) and set **POLICY_FILE** to your policy file path.
+This page gives copy-paste snippets for common setups. **Policy** (sensitivity, cost, default provider) is loaded from the JSON file at **POLICY_FILE** only; see [Policy file schema](policy_file_schema.md) and [app/policies.example.json](../app/policies.example.json). The in-repo example lives in **app/**; at runtime **POLICY_FILE** can be any path (e.g. `./app/policies.example.json` or `./app/policies.json` for local overrides). Policy `default_provider` is **`local`** or **`public`** only; when `public`, the concrete provider (openai vs anthropic) comes from **PUBLIC_LLM_URL**. For behavior, see [Engine rules](engine_rules.md). Start from [.env.example](../.env.example) and set **POLICY_FILE** to your policy file path.
 
 ---
 

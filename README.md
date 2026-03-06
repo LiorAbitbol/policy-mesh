@@ -46,7 +46,7 @@ OpenAPI docs at `/docs` when the app is running. Config is via environment varia
 | **[docs/getting_started.md](docs/getting_started.md)** | Prerequisites, Docker flow, migrations, verification, troubleshooting |
 | **[docs/engine_rules.md](docs/engine_rules.md)** | Routing policy: rule order, policy file (POLICY_FILE), and how they affect behavior |
 | **[docs/policy_file_schema.md](docs/policy_file_schema.md)** | Policy file JSON schema and location |
-| **[docs/policies.example.json](docs/policies.example.json)** | Example policy file |
+| **[app/policies.example.json](app/policies.example.json)** | Example policy file |
 | **[docs/api_usage.md](docs/api_usage.md)** | Request/response contract, curl examples, integration snippet |
 | **[docs/configuration_scenarios.md](docs/configuration_scenarios.md)** | Common setups: OpenAI default + sensitive local, local only, USD cost, audit off |
 | **[docs/metrics.md](docs/metrics.md)** | Prometheus metrics, labels, scrape config, example queries |

@@ -1,6 +1,6 @@
 # Getting started
 
-This guide focuses on **testing the full app with Docker**. You can run the API, minimal UI, audit, and either OpenAI or Ollama (or both) in a few steps. A shorter path for **tests only** and **running the app on the host** is at the end.
+This guide focuses on **testing the full app with Docker**. You can run the API, minimal UI, audit, and either OpenAI, Anthropic, or Ollama (or a combination) in a few steps. A shorter path for **tests only** and **running the app on the host** is at the end.
 
 ---
 
@@ -10,10 +10,10 @@ This guide focuses on **testing the full app with Docker**. You can run the API,
 |-------------|---------|
 | **Docker** and **Docker Compose** | Run Postgres, the app, and optionally Ollama in containers. [Install Docker](https://docs.docker.com/get-docker/). |
 | **Python 3.11+** (on your host) | Run database migrations and the test suite. Not required for running the app in Docker. |
-| **Public LLM API key** (optional) | Use a cloud provider (e.g. OpenAI) as default. Set `PUBLIC_LLM_API_KEY`; get OpenAI keys at [platform.openai.com](https://platform.openai.com/api-keys). |
+| **Public LLM API key** (optional) | Use a cloud provider (OpenAI or Anthropic) as default. Set `PUBLIC_LLM_API_KEY`; get keys at [platform.openai.com](https://platform.openai.com/api-keys) or [console.anthropic.com](https://console.anthropic.com). |
 | **Ollama** (optional) | Use a local model as default or fallback. Run via Docker in this guide; no separate install. |
 
-You need **at least one** of: public LLM (e.g. set `PUBLIC_LLM_API_KEY` for OpenAI) or local LLM (Ollama with a model pulled). The app will not respond to chat until one provider is configured.
+You need **at least one** of: public LLM (set `PUBLIC_LLM_API_KEY` for OpenAI or Anthropic) or local LLM (Ollama with a model pulled). The app will not respond to chat until one provider is configured.
 
 ---
 
@@ -55,16 +55,8 @@ Edit `.env` in a text editor. You **must** set at least the following for the fu
 Policy (sensitivity keywords, cost thresholds, default provider) is loaded from a JSON file only. **POLICY_FILE** must be set to the path of that file. If unset, or if the file is missing or invalid JSON, the application errors.
 
 **Where the policy file lives:**
-- **Docker:** The image includes a default policy at **`app/policies.json`** (copied from the repo). `docker-compose.yml` sets `POLICY_FILE=./app/policies.json`, so the app runs without extra setup. To use your own policy, mount a file and set `POLICY_FILE` to its path in the container.
-- **Host or custom Docker:** An example lives in **docs/** (`docs/policies.example.json`). Copy and set the path in `.env`:
-  ```bash
-  cp docs/policies.example.json ./policies.json
-  ```
-  In `.env`:
-  ```env
-  POLICY_FILE=./policies.json
-  ```
-  Edit `policies.json` as needed (keywords, cost rules, `default_provider`: `local` or `public`). See [Policy file schema](policy_file_schema.md).
+- **Default:** The repo includes **`app/policies.example.json`**. Set **`POLICY_FILE=./app/policies.example.json`** in `.env` for both host and Docker; the image uses this by default. No copy needed to run.
+- **Local override:** To customize, create **`app/policies.json`** (gitignored) and set `POLICY_FILE=./app/policies.json`, or copy: `cp app/policies.example.json app/policies.json` and edit. See [Policy file schema](policy_file_schema.md).
 
 #### Required for audit (Postgres)
 
@@ -83,7 +75,7 @@ Set the default in your **policy file** (`cost.default_provider`): **`local`** o
 
 **Option A — Use a public LLM (OpenAI or Anthropic) as default**
 
-- Set your public LLM API key in `.env`: `PUBLIC_LLM_API_KEY=sk-your-actual-key-here`, and set **PUBLIC_LLM_URL** if needed (defaults to OpenAI).
+- Set your public LLM API key in `.env`: `PUBLIC_LLM_API_KEY=sk-your-actual-key-here`, and set **PUBLIC_LLM_URL** if needed (defaults to OpenAI; use an Anthropic URL for Anthropic).
 - In `policies.json`, set `"cost": { ..., "default_provider": "public" }`.
 
 **Option B — Use Ollama (local) as default**
@@ -159,7 +151,7 @@ docker compose up -d ollama
 docker compose exec ollama ollama pull llama2
 ```
 
-After the pull finishes, the app can route chat to local. You can leave Ollama stopped if you use only OpenAI.
+After the pull finishes, the app can route chat to local. You can leave Ollama stopped if you use only OpenAI or Anthropic.
 
 ---
 
@@ -245,7 +237,7 @@ From the repo root with a virtualenv activated and deps installed (`pip install 
 pytest tests/ -v
 ```
 
-All tests use mocks (no real Postgres, Ollama, or OpenAI). You should see all tests pass.
+All tests use mocks (no real Postgres, Ollama, OpenAI, or Anthropic). You should see all tests pass.
 
 ---
 
@@ -267,7 +259,7 @@ Then use the same verification steps (health, routes, chat, audit, UI at http://
 
 | Goal | Main steps |
 |------|------------|
-| **Full app in Docker (public LLM + audit)** | `.env` with `POLICY_FILE`, `PUBLIC_LLM_API_KEY`. Policy file: `cost.default_provider: "public"`. Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
+| **Full app in Docker (public LLM + audit)** | `.env` with `POLICY_FILE`, `PUBLIC_LLM_API_KEY` (OpenAI or Anthropic). Policy file: `cost.default_provider: "public"`. Postgres → migrations (localhost) → `docker compose up -d app` → verify. |
 | **Full app in Docker (Ollama + audit)** | `.env` with `POLICY_FILE`. Policy file: `cost.default_provider: "local"`. Postgres → migrations → `docker compose up -d app` and `docker compose up -d ollama` + `ollama pull llama2` → verify. |
 | **Tests only** | `pip install -e ".[dev]"` then `pytest tests/ -v`. |
 | **App on host** | Postgres + migrations + `DATABASE_URL`, `POLICY_FILE`, and provider vars in env → `uvicorn app.main:app --reload`. |

@@ -8,7 +8,7 @@ from app.core.config import PolicyConfig
 from app.decision.engine import decide
 from app.decision.reason_codes import (
     COST_PREFER_LOCAL,
-    DEFAULT_OPENAI,
+    DEFAULT,
     SENSITIVE_KEYWORD_MATCH,
 )
 
@@ -68,15 +68,15 @@ def test_cost_branch_over_threshold_returns_default() -> None:
     config = _config(keywords=(), max_length=50)
     result = decide(prompt_text="x" * 100, prompt_length=100, config=config)
     assert result["provider"] == "openai"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_default_branch_returns_openai_and_reason_code() -> None:
-    """Default: no sensitivity, over cost threshold → default_provider public resolves to openai, DEFAULT_OPENAI."""
+    """Default: no sensitivity, over cost threshold → default_provider public resolves to openai, DEFAULT."""
     config = _config(keywords=(), max_length=10, default_provider="public")
     result = decide(prompt_text="A long prompt that exceeds cost threshold", prompt_length=100, config=config)
     assert result["provider"] == "openai"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_default_provider_configurable() -> None:
@@ -84,7 +84,7 @@ def test_default_provider_configurable() -> None:
     config = _config(keywords=(), max_length=10, default_provider="local")
     result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
     assert result["provider"] == "local"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_default_provider_public_resolves_to_anthropic() -> None:
@@ -93,7 +93,7 @@ def test_default_provider_public_resolves_to_anthropic() -> None:
     with patch("app.decision.engine.get_public_provider_from_url", return_value="anthropic"):
         result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
     assert result["provider"] == "anthropic"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_default_provider_public_resolves_to_openai() -> None:
@@ -102,7 +102,7 @@ def test_default_provider_public_resolves_to_openai() -> None:
     with patch("app.decision.engine.get_public_provider_from_url", return_value="openai"):
         result = decide(prompt_text="Long prompt", prompt_length=100, config=config)
     assert result["provider"] == "openai"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_determinism_same_input_same_decision() -> None:
@@ -143,7 +143,7 @@ def test_cost_usd_mode_under_threshold_returns_local() -> None:
 
 
 def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
-    """USD-mode: estimated cost over threshold → default (public) provider with DEFAULT_OPENAI reason code."""
+    """USD-mode: estimated cost over threshold → default (public) provider with DEFAULT reason code."""
     config = _config(
         keywords=(),
         max_length=10_000,
@@ -155,7 +155,7 @@ def test_cost_usd_mode_over_threshold_returns_default_provider() -> None:
     # prompt_length=12_000 chars → tokens≈3_000 → cost = 3000/1e6*20 = $0.06 > $0.05
     result = decide(prompt_text="x" * 12_000, prompt_length=12_000, config=config)
     assert result["provider"] == "openai"
-    assert result["reason_codes"] == [DEFAULT_OPENAI]
+    assert result["reason_codes"] == [DEFAULT]
 
 
 def test_cost_fallback_to_length_mode_when_usd_config_missing() -> None:
@@ -168,4 +168,4 @@ def test_cost_fallback_to_length_mode_when_usd_config_missing() -> None:
     # Over threshold → default (openai)
     over = decide(prompt_text="x" * 100, prompt_length=100, config=config)
     assert over["provider"] == "openai"
-    assert over["reason_codes"] == [DEFAULT_OPENAI]
+    assert over["reason_codes"] == [DEFAULT]

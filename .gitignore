@@ -1,6 +1,9 @@
 # Context private (never commit)
 .context/private/
 
+# Local policy override (repo ships app/policies.example.json only)
+app/policies.json
+
 # Python
 __pycache__/
 *.py[cod]
